@@ -44,7 +44,7 @@ States_MenuType stateContacts(void){
 	PhaseContacts_Type(*contactsFunctions)(PhaseContacts_Type);
 	phaseContacts.stateMain = CONTACTS;
 
-	contactsFunctions = contactsMenu[phase].PhaseContacts;
+	contactsFunctions = phasesContacts[phase].PhaseContacts;
 	phaseContacts = contactsFunctions(phaseContacts);
 
 	phase = phaseContacts.phaseState;

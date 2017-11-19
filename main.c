@@ -55,13 +55,6 @@
 /*Init mode to output FTM*/
 #define INIT_MOD		(0.80F)
 
-/**Set of pin of Buttons**/
-const Button_ConfigType Buttons_Config[4] = {
-							{PORT_C,BIT2},	/**Button 1**/
-							{PORT_C,BIT5},	/**Button 2**/
-							{PORT_C,BIT7},	/**Button 3**/
-							{PORT_C,BIT0}   /**Button 4**/
-};
 
 /**Settings of SPI**/
 const SPI_ConfigType SPI_Config={
@@ -88,7 +81,6 @@ const StateType StateProgram[6] =
 };
 
 int main(void){
-
 	/**Configuration to enable the clock in 60 MHz**/
 	int mcg_clk_hz;
 	unsigned char modeMCG = 0;
@@ -102,7 +94,6 @@ int main(void){
 	SPI_init(&SPI_Config);
 	LCDNokia_init();
 	LCDNokia_clear();
-	Buttons_init(Buttons_Config);
 	I2C_init(I2C_0, 30000000, 100000);
 
 	/***Interruptions Configurations***/

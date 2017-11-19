@@ -60,6 +60,8 @@ typedef const struct PhaseContacts{
 }PhasePtrContacts_Type;
 /***********************************************************/
 
+void cleanContact(uint8 contact);
+
 PhaseMainMenu_Type initialLoad(PhaseMainMenu_Type data);
 PhaseMainMenu_Type generalView(PhaseMainMenu_Type data);
 
