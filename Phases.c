@@ -10,11 +10,12 @@
 #include "States.h"
 #include "I2CE2PROM.h"
 
-#define INITIAL_POSITION	(0x2000U)
-#define NEXT_POSITION		(0x0100U)
-#define FINAL_POSITION		(0x1000U)
+#define POSITION_NAME		(0U)
+#define POSITION_NUMBER 	(2000U)
+#define POSITION_CONTACTS	(3000U)
+#define NEXT_POSITION		(100U)
+#define FINAL_POSITION		(1000U)
 #define REGISTER_EMPTY		('\0')
-
 
 /**ASCII table such as reference**/
 typedef enum{
@@ -40,29 +41,29 @@ typedef enum{
 }ASCII_Code;
 
 typedef enum{ASCII_CR = 13, ASCII_ESC = 27}ASCII_Special;
-static uint32 AddressName;
-static uint32 AddressNumber;
-static uint32 NoContacts = 0;
+static uint32 CurrentAddress_Name;
+static uint32 CurrentAddress_Number;
+static uint32 NoContacts;
+static ModeContact_Type ModeContact = MODE_ADD;
 
 void cleanContact(uint8 contact){
 	uint8 counter;
 	uint32 positionName;
 	uint32 positionNumber;
 
-	positionName = (contact * 100) - 100;
+	positionName = (contact * NEXT_POSITION) - NEXT_POSITION;
 	for(counter = 0; counter < 10; counter++){
 		writeMemory(positionName, REGISTER_EMPTY);
 		E2PROMdelay(65000);
 	}
 	counter = 0;
 
-	positionNumber = positionName + 2000;
+	positionNumber = positionName + POSITION_NUMBER;
 	for(counter = 0; counter < 12; counter++){
 		writeMemory(positionNumber, REGISTER_EMPTY);
 		E2PROMdelay(65000);
 	}
 }
-
 
 PhaseMainMenu_Type initialLoad(PhaseMainMenu_Type data){
 	/**Create the variable with current data**/
@@ -70,6 +71,8 @@ PhaseMainMenu_Type initialLoad(PhaseMainMenu_Type data){
 
 	//Load The system and calibration of Compass
 	//Frames LCD
+
+	NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = GENERAL_VIEW;
@@ -119,13 +122,14 @@ PhaseContacts_Type contactsMenu(PhaseContacts_Type data){
 		/**Comparison between the pressed keys to continue with next main state**/
 		if(getUART0_mailBox() == ASCII_1){currentContacts1.phaseState = VIEW_CONTACTS;}
 		if(getUART0_mailBox() == ASCII_2){currentContacts1.phaseState = ADD_CONTACTS;}
+		if(getUART0_mailBox() == ASCII_B){currentContacts1.stateMain = MAIN_MENU;}
+		if(getUART0_mailBox() == ASCII_b){currentContacts1.stateMain = MAIN_MENU;}
 
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
 	/**Clear the mailbox**/
 	clearUART0_mailbox();
-
 	return (currentContacts1);
 }
 
@@ -138,17 +142,17 @@ PhaseContacts_Type viewContacts(PhaseContacts_Type data){
 	currentContacts2.phaseState = data.phaseState;
 	currentContacts2.stateMain = data.stateMain;
 
-	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
-		/**Comparison between the pressed keys to continue with next main state**/
-		if(getUART0_mailBox() == ASCII_3){currentContacts2.phaseState = EDIT_CONTACTS;}
+		if(getUART0_mailBox() == ASCII_E){currentContacts2.phaseState = EDIT_CONTACTS;}
+		if(getUART0_mailBox() == ASCII_e){currentContacts2.phaseState = EDIT_CONTACTS;}
+		if(getUART0_mailBox() == ASCII_B){currentContacts2.phaseState = CONTACT_MENU;}
+		if(getUART0_mailBox() == ASCII_b){currentContacts2.phaseState = CONTACT_MENU;}
 
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
 	/**Clear the mailbox**/
 	clearUART0_mailbox();
-
 	return (currentContacts2);
 }
 
@@ -160,12 +164,14 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 	static uint8 counterSize_Name = 0;
 	static uint8 counterSize_Number = 0;
 
+
 	/**Set with the current state and phase**/
 	currentContacts3.phaseState = data.phaseState;
 	currentContacts3.stateMain = data.stateMain;
+	currentContacts3.noContact = NoContact * NEXT_POSITION;
 
 	/**Verifies if the registers are full**/
-	if(readMemory((uint16)FINAL_POSITION) == REGISTER_EMPTY){
+	if(readMemory(FINAL_POSITION) == REGISTER_EMPTY){
 		/**Capture the Name field*/
 		if((getUART0_flag()) && (flagField == 0)){
 
@@ -173,7 +179,8 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 			counterSize_Name++;
 			if(getUART0_mailBox() == ASCII_CR){
 				flagField = 1;
-				currentContacts3.sizeName = counterSize_Name - 1;
+				currentContacts3.sizeName = counterSize_Name;
+				counterSize_Name = 0;
 			}
 			/**clear the reception flag*/
 			setUART0_flag(FALSE);
@@ -186,8 +193,9 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 			counterSize_Number++;
 			if(getUART0_mailBox() == ASCII_CR){
 				flagField = 0;
-				currentContacts3.sizeNumber = counterSize_Number - 1;
+				currentContacts3.sizeNumber = counterSize_Number;
 				currentContacts3.phaseState = SAVE_CONTACTS;
+				counterSize_Number = 0;
 			}
 			/**clear the reception flag*/
 			setUART0_flag(FALSE);
@@ -200,7 +208,7 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 
 		if(getUART0_flag()){
 			if(getUART0_mailBox() == ASCII_ESC){
-				currentContacts3.phaseState = VIEW_CONTACTS;
+				currentContacts3.phaseState = CONTACT_MENU;
 			}
 			/**clear the reception flag*/
 			setUART0_flag(FALSE);
@@ -219,32 +227,36 @@ PhaseContacts_Type editContacts(PhaseContacts_Type data){
 	currentContacts4.stateMain = data.stateMain;
 
 	if(getUART0_flag()){
-		if(getUART0_mailBox() == ASCII_0){cleanContact(1);}
-		if(getUART0_mailBox() == ASCII_1){cleanContact(2);}
-		if(getUART0_mailBox() == ASCII_2){cleanContact(3);}
-		if(getUART0_mailBox() == ASCII_3){cleanContact(4);}
-		if(getUART0_mailBox() == ASCII_4){cleanContact(5);}
-		if(getUART0_mailBox() == ASCII_5){cleanContact(6);}
-		if(getUART0_mailBox() == ASCII_6){cleanContact(7);}
-		if(getUART0_mailBox() == ASCII_7){cleanContact(8);}
-		if(getUART0_mailBox() == ASCII_8){cleanContact(9);}
-		if(getUART0_mailBox() == ASCII_9){cleanContact(10);}
+		if(getUART0_mailBox() == ASCII_0){cleanContact(1); currentContacts4.noContact = 1;}
+		if(getUART0_mailBox() == ASCII_1){cleanContact(2); currentContacts4.noContact = 2;}
+		if(getUART0_mailBox() == ASCII_2){cleanContact(3); currentContacts4.noContact = 3;}
+		if(getUART0_mailBox() == ASCII_3){cleanContact(4); currentContacts4.noContact = 4;}
+		if(getUART0_mailBox() == ASCII_4){cleanContact(5); currentContacts4.noContact = 5;}
+		if(getUART0_mailBox() == ASCII_5){cleanContact(6); currentContacts4.noContact = 6;}
+		if(getUART0_mailBox() == ASCII_6){cleanContact(7); currentContacts4.noContact = 7;}
+		if(getUART0_mailBox() == ASCII_7){cleanContact(8); currentContacts4.noContact = 8;}
+		if(getUART0_mailBox() == ASCII_8){cleanContact(9); currentContacts4.noContact = 9;}
+		if(getUART0_mailBox() == ASCII_9){cleanContact(10); currentContacts4.noContact = 10;}
 
+		ModeContact = MODE_EDIT;
 		currentContacts4.phaseState = ADD_CONTACTS;
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
-
 	return (currentContacts4);
 }
 PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 
 	/**Create the variable with current data**/
 	static PhaseContacts_Type currentContacts5;
-	static uint32 positionAddress_Name = 0;
-	static uint32 positionAddress_Number = INITIAL_POSITION;
+	static uint32 positionAddress_Name;
+	static uint32 positionAddress_Number;
 	uint8 counterSave;
 	uint32 counterAddress = 0;
+
+	if(ModeContact == MODE_EDIT){}
+	positionAddress_Name += (NoContacts*NEXT_POSITION) + NEXT_POSITION;
+	positionAddress_Number += positionAddress_Name + POSITION_NUMBER;
 
 	/**Save the name into memory*/
 	for(counterSave = data.sizeName; counterSave != 0; counterSave--){
@@ -253,7 +265,7 @@ PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 		counterAddress++;
 		E2PROMdelay(65000);
 	}
-	AddressName = positionAddress_Name;
+	CurrentAddress_Name = positionAddress_Name;
 	positionAddress_Name += NEXT_POSITION;
 	counterSave = 0;
 	counterAddress = 0;
@@ -266,7 +278,8 @@ PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 		E2PROMdelay(65000);
 	}
 	NoContacts++;
-	AddressNumber = positionAddress_Number;
+	writeMemory(POSITION_CONTACTS,(REGISTER_EMPTY + NoContacts));
+	CurrentAddress_Number = positionAddress_Number;
 	positionAddress_Number += NEXT_POSITION;
 	currentContacts5.phaseState = CONTACT_MENU;
 	currentContacts5.stateMain = CONTACTS;

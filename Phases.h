@@ -37,6 +37,8 @@ typedef const struct PhaseMainMenu{
 /**
  * \brief This data type define the data type in CONTACTS
  */
+typedef enum{MODE_ADD,MODE_EDIT}ModeContact_Type;
+
 typedef enum{CONTACT_MENU,
 			VIEW_CONTACTS,
 			ADD_CONTACTS,
@@ -49,6 +51,7 @@ typedef struct{
 	uint8 number[15];
 	uint8 sizeName;
 	uint8 sizeNumber;
+	uint8 noContact;
 	PhaseStateContacts_Type phaseState;
 	States_MenuType stateMain;
 }PhaseContacts_Type;
