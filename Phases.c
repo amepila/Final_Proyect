@@ -9,13 +9,17 @@
 #include "Phases.h"
 #include "States.h"
 #include "I2CE2PROM.h"
+#include "SnakeGame.h"
 
 #define POSITION_NAME		(0U)
 #define POSITION_NUMBER 	(2000U)
 #define POSITION_CONTACTS	(3000U)
+#define POSITION_GAMERS		(3010U)
+#define POSITION_SCORE		(4000U)
 #define NEXT_POSITION		(100U)
 #define FINAL_POSITION		(1000U)
 #define REGISTER_EMPTY		('\0')
+#define FULL_CONTACTS		(9U)
 
 /**ASCII table such as reference**/
 typedef enum{
@@ -44,6 +48,7 @@ typedef enum{ASCII_CR = 13, ASCII_ESC = 27}ASCII_Special;
 static uint32 CurrentAddress_Name;
 static uint32 CurrentAddress_Number;
 static uint32 NoContacts;
+static uint32 NoGamers;
 static ModeContact_Type ModeContact = MODE_ADD;
 
 void cleanContact(uint8 contact){
@@ -73,6 +78,7 @@ PhaseMainMenu_Type initialLoad(PhaseMainMenu_Type data){
 	//Frames LCD
 
 	NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
+	NoGamers = Convert_wordASCIItoDATA(readMemory(POSITION_GAMERS));
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = GENERAL_VIEW;
@@ -168,7 +174,7 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 	currentContacts3.noContact = NoContacts;
 
 	/**Verifies if the registers are full**/
-	if(readMemory(FINAL_POSITION) == REGISTER_EMPTY){
+	if(NoContacts != FULL_CONTACTS){
 		/**Capture the Name field*/
 		if((getUART0_flag()) && (flagField == 0)){
 
@@ -197,8 +203,6 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 			/**clear the reception flag*/
 			setUART0_flag(FALSE);
 		}
-		/**Clear the mailbox**/
-		clearUART0_mailbox();
 	}else{
 		//Message in display of registers are full
 		//Press ESC to exit
@@ -211,6 +215,8 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 			setUART0_flag(FALSE);
 		}
 	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
 	return (currentContacts3);
 }
 
@@ -240,6 +246,9 @@ PhaseContacts_Type editContacts(PhaseContacts_Type data){
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
 	return (currentContacts4);
 }
 PhaseContacts_Type saveContacts(PhaseContacts_Type data){
@@ -283,3 +292,83 @@ PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 	return (currentContacts5);
 }
 
+PhaseSnake_Type startGame(PhaseSnake_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseSnake_Type currentSnake1;
+
+	//Display the initial menu
+
+	currentSnake1.phaseState = START_GAME;
+	currentSnake1.stateMain = SNAKE_GAME;
+	/**Press any key to continue**/
+	if(getUART0_flag()){
+		currentSnake1.phaseState = RUN_GAME;
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	return (currentSnake1);
+}
+PhaseSnake_Type runGame(PhaseSnake_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseSnake_Type currentSnake2;
+	static uint8 score = 0;
+	static uint8 lives;
+
+	currentSnake2.phaseState = RUN_GAME;
+	currentSnake2.stateMain = SNAKE_GAME;
+
+	//Snake game
+
+	if(getUART0_flag()){
+		if(getUART0_mailBox() == ASCII_ESC){
+			currentSnake2.score = score;
+			currentSnake2.phaseState = 	EXIT_GAME;
+			score = 0;
+			lives = 0;
+		}
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	if(0 == lives){
+		currentSnake2.score = score;
+		currentSnake2.phaseState = 	EXIT_GAME;
+		score = 0;
+	}
+	return (currentSnake2);
+}
+
+PhaseSnake_Type exitGame(PhaseSnake_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseSnake_Type currentSnake3;
+
+	currentSnake3.score = data.score;
+	currentSnake3.phaseState = EXIT_GAME;
+	currentSnake3.stateMain = SNAKE_GAME;
+
+	//Display if the player wishes to play once again
+	//Display the score obtained
+	//S to play again
+	//N to exit
+
+	if(getUART0_flag()){
+		if(getUART0_mailBox() == ASCII_S){currentSnake3.phaseState = RUN_GAME;}
+		if(getUART0_mailBox() == ASCII_s){currentSnake3.phaseState = RUN_GAME;}
+		if(getUART0_mailBox() == ASCII_N){currentSnake3.stateMain = MAIN_MENU;}
+		if(getUART0_mailBox() == ASCII_n){currentSnake3.stateMain = MAIN_MENU;}
+
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+	return (currentSnake3);
+}

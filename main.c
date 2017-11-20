@@ -91,6 +91,7 @@ int main(void){
 	States_MenuType(*mainFunctions)(void);
 
 	/**Configurations of devices**/
+	//PIT_clockGating();
 	SPI_init(&SPI_Config);
 	LCDNokia_init();
 	LCDNokia_clear();
@@ -101,11 +102,11 @@ int main(void){
 	NVIC_setBASEPRI_threshold(PRIORITY_10);
 
 	/**Set the priority**/
-	NVIC_enableInterruptAndPriotity(PORTA_IRQ, PRIORITY_5);
-	NVIC_enableInterruptAndPriotity(PORTB_IRQ, PRIORITY_5);
+	//NVIC_enableInterruptAndPriotity(PIT_0, PRIORITY_5);
 	NVIC_enableInterruptAndPriotity(PORTC_IRQ, PRIORITY_5);
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_9);
 	NVIC_enableInterruptAndPriotity(UART1_IRQ, PRIORITY_9);
+
 
 	/**Configures UART 0 to transmit/receive at 115200 bauds with a 60 MHz of clock core*/
 	UART0_init(UART_0, 60000000, BD_115200);

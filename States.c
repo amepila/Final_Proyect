@@ -11,8 +11,8 @@
 
 const PhasePtrMainMenu_Type phasesMainMenu[2] =
 {
-		{generalView},
-		{initialLoad}
+		{initialLoad},
+		{generalView}
 };
 const PhasePtrContacts_Type phasesContacts[5] =
 {
@@ -21,6 +21,12 @@ const PhasePtrContacts_Type phasesContacts[5] =
 		{addContacts},
 		{editContacts},
 		{saveContacts}
+};
+const PhasePtrSnake_Type phasesSnake[3] =
+{
+		{startGame},
+		{runGame},
+		{exitGame}
 };
 
 States_MenuType stateMainMenu(void){
@@ -61,10 +67,16 @@ States_MenuType stateMessages(void){
 
 States_MenuType stateSnakeGame(void){
 
-	States_MenuType MainState = SNAKE_GAME;
+	static PhaseStateSnake_Type phase = START_GAME;
+	static PhaseSnake_Type phaseSnake;
+	PhaseSnake_Type(*contactsSnake)(PhaseSnake_Type);
+	phaseSnake.stateMain = SNAKE_GAME;
 
+	contactsSnake = phasesSnake[phase].PhaseSnake;
+	phaseSnake = contactsSnake(phaseSnake);
 
-	return (MainState);
+	phase = phaseSnake.phaseState;
+	return (phaseSnake.stateMain);
 }
 
 States_MenuType stateCompass(void){
