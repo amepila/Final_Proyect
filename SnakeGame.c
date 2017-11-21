@@ -17,15 +17,26 @@
 #define RIGHT			(68)
 #define BODY			(254)
 #define SYSTEM_CLOCK	(60000000)
+#define EDGE_UP			(0)
+#define EDGE_DOWN		(6)
+#define EDGE_LEFT		(0)
+#define EDGE_RIGHT		(84)
 
-static uint32 EdgeUp = 0;
-static uint32 EdgeDown = 6;
-static uint32 EdgeLeft = 0;
-static uint32 EdgeRight = 84;
 static uint32 LenghtSnake;
 static uint32 Score;
 static uint32 Lives;
-static Direction_Type CurrentDirection = DIRECTION_RIGHT;
+/**Axis X of snake position**/
+static uint32 ComponentX[100];
+/**Axis Y of snake position, is the number of line**/
+static uint32 ComponentY1[100];
+/**Second component of Y, is the address of each line**/
+static uint32 ComponentY2[100];
+/**Saves the current direction of snake**/
+static Direction_Type CurrentDirection;
+
+static uint32 ValueX;
+static uint32 ValueY1;
+static uint32 ValueY2;
 
 const StateMove_Type StateMove[4] =
 {
@@ -69,11 +80,23 @@ void edgeGame(void){
 uint8 initialPosition(void){
 	uint8 counter;
 
-	LCDNokia_gotoXY(15,0);
+	ValueX = 14;
+	ValueY1 = 4;
+	ValueY2 = 1;
+	LenghtSnake = 15;
+	LCDNokia_gotoXY(30,4);
+	CurrentDirection = DIRECTION_RIGHT;
 
-	for(counter = 15; counter < 30; counter++){
-		LCDNokia_gotoXY(counter,4);
-		LCDNokia_writeByte(LCD_DATA,0x01);
+	/**Save the initial coordinates**/
+	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentX[counter] = ValueX + counter;
+		ComponentY1[counter] = ValueY1;
+		ComponentY2[counter] = ValueY2;
+	}
+	/**Draw the snake**/
+	for(counter = 0; counter < LenghtSnake; counter++){
+		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
+		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
 	return (TRUE);
 }
@@ -87,14 +110,29 @@ Direction_Type moveUp(void){
 }
 Direction_Type moveDown(void){
 
+
+
 	return (DIRECTION_DOWN);
 }
 Direction_Type moveLeft(void){
+
 
 	return (DIRECTION_LEFT);
 }
 Direction_Type moveRight(void){
 
+	uint32 counter;
+
+	ValueX++;
+	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentX[counter] = ValueX + counter;
+		ComponentY1[counter] = ValueY1;
+		ComponentY2[counter] = ValueY2;
+	}
+	for(counter = 0; counter < LenghtSnake; counter++){
+		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
+		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
 	return (DIRECTION_RIGHT);
 }
 

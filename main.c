@@ -119,10 +119,19 @@ int main(void){
 	/**Enable all the interrupts **/
 	EnableInterrupts;
 
+	uint8 lock =  FALSE;
     while(1){
     	/**Machine states based on tags**/
-    	mainFunctions = StateProgram[currentState].stateFunction;
-    	currentState = mainFunctions();
+    	//mainFunctions = StateProgram[currentState].stateFunction;
+    	//currentState = mainFunctions();
+
+    	edgeGame();
+    	if(FALSE == lock){
+        	initialPosition();
+        	lock = TRUE;
+    	}
+    	moveRight();
+    	LCDNokia_clear();
     }
     return 0;
 }
