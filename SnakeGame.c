@@ -21,6 +21,8 @@
 #define EDGE_DOWN		(6)
 #define EDGE_LEFT		(0)
 #define EDGE_RIGHT		(84)
+#define EMPTY_BYTE_Y2	(0x00)
+#define FULL_BYTE_Y2	(255)
 
 static uint32 LenghtSnake;
 static uint32 Score;
@@ -37,6 +39,7 @@ static Direction_Type CurrentDirection;
 static uint32 ValueX;
 static uint32 ValueY1;
 static uint32 ValueY2;
+static uint8 CounterBitY;
 
 const StateMove_Type StateMove[4] =
 {
@@ -83,6 +86,8 @@ uint8 initialPosition(void){
 	ValueX = 14;
 	ValueY1 = 4;
 	ValueY2 = 1;
+	CounterBitY = 0;
+
 	LenghtSnake = 15;
 	LCDNokia_gotoXY(30,4);
 	CurrentDirection = DIRECTION_RIGHT;
@@ -111,14 +116,19 @@ Direction_Type moveUp(void){
 Direction_Type moveDown(void){
 
 	uint32 counter;
+	static counterBit;
 
-	ValueY2++;
+	CounterBitY++;
+	ValueY2 |= 1<<CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = ValueX + counter;
+		if(ValueY2 == FULL_BYTE_Y2){
+			ValueY2 = EMPTY_BYTE_Y2;
+			ValueY1++;
+		}
+		ComponentX[counter] = ValueX;
 		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] = ValueY2;
+		ComponentY2[counter] |= ValueY2;
 	}
-
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);

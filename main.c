@@ -130,8 +130,9 @@ int main(void){
         	initialPosition();
         	lock = TRUE;
     	}
-    	moveRight();
-    	LCDNokia_clear();
+    	//initialPosition();
+    	moveDown();
+    	//LCDNokia_clear();
     }
     return 0;
 }
