@@ -21,8 +21,9 @@
 #define EDGE_DOWN		(6)
 #define EDGE_LEFT		(0)
 #define EDGE_RIGHT		(84)
-#define EMPTY_BYTE_Y2	(0x00)
-#define FULL_BYTE_Y2	(255)
+#define EMPTY_BIT_Y2	(0x00)
+#define FULL_BYTE_Y2	(0x0F)
+#define MAX_LINES_Y1	(6)
 
 static uint32 LenghtSnake;
 static uint32 Score;
@@ -116,15 +117,10 @@ Direction_Type moveUp(void){
 Direction_Type moveDown(void){
 
 	uint32 counter;
-	static counterBit;
 
 	CounterBitY++;
 	ValueY2 |= 1<<CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
-		if(ValueY2 == FULL_BYTE_Y2){
-			ValueY2 = EMPTY_BYTE_Y2;
-			ValueY1++;
-		}
 		ComponentX[counter] = ValueX;
 		ComponentY1[counter] = ValueY1;
 		ComponentY2[counter] |= ValueY2;
@@ -132,6 +128,12 @@ Direction_Type moveDown(void){
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
+	if(ValueY2 == FULL_BYTE_Y2){
+		ValueY2 = 1;
+		CounterBitY = EMPTY_BIT_Y2;
+		ValueY1++;
+		if(ValueY1 < MAX_LINES_Y1){ValueY1 = 0;}
 	}
 	return (DIRECTION_DOWN);
 }
