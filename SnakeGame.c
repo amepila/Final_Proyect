@@ -110,13 +110,36 @@ Direction_Type moveUp(void){
 }
 Direction_Type moveDown(void){
 
+	uint32 counter;
 
+	ValueY2++;
+	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentX[counter] = ValueX + counter;
+		ComponentY1[counter] = ValueY1;
+		ComponentY2[counter] = ValueY2;
+	}
 
+	for(counter = 0; counter < LenghtSnake; counter++){
+		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
+		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
 	return (DIRECTION_DOWN);
 }
 Direction_Type moveLeft(void){
 
+	uint32 counter;
 
+	ValueX--;
+	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentX[counter] = ValueX + counter;
+		ComponentY1[counter] = ValueY1;
+		ComponentY2[counter] = ValueY2;
+	}
+
+	for(counter = 0; counter < LenghtSnake; counter++){
+		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
+		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
 	return (DIRECTION_LEFT);
 }
 Direction_Type moveRight(void){
