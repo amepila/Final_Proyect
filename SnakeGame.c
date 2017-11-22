@@ -22,7 +22,7 @@
 #define EDGE_LEFT		(0)
 #define EDGE_RIGHT		(84)
 #define EMPTY_BIT_Y2	(0x00)
-#define FULL_BYTE_Y2	(0x0F)
+#define FULL_BYTE_Y2	(0xFF)
 #define MAX_LINES_Y1	(6)
 
 static uint32 LenghtSnake;
@@ -111,11 +111,6 @@ uint8 foodGenerator(void){
 
 Direction_Type moveUp(void){
 
-
-	return (DIRECTION_UP);
-}
-Direction_Type moveDown(void){
-
 	uint32 counter;
 
 	CounterBitY++;
@@ -134,6 +129,29 @@ Direction_Type moveDown(void){
 		CounterBitY = EMPTY_BIT_Y2;
 		ValueY1++;
 		if(ValueY1 < MAX_LINES_Y1){ValueY1 = 0;}
+	}
+	return (DIRECTION_UP);
+}
+Direction_Type moveDown(void){
+
+	uint32 counter;
+
+	CounterBitY++;
+	ValueY2 |= 1<<CounterBitY;
+	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentX[counter] = ValueX;
+		ComponentY1[counter] = ValueY1;
+		ComponentY2[counter] |= ValueY2;
+	}
+	for(counter = 0; counter < LenghtSnake; counter++){
+		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
+		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
+	if(ValueY2 > FULL_BYTE_Y2){
+		ValueY2 = 1;
+		CounterBitY = EMPTY_BIT_Y2;
+		ValueY1++;
+		if(ValueY1 == MAX_LINES_Y1){ValueY1 = 0;}
 	}
 	return (DIRECTION_DOWN);
 }

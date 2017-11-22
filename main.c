@@ -15,6 +15,7 @@
 #include "MCG.h"
 #include "UART.h"
 #include "States.h"
+#include "Frames.h"
 
 /**Macros to Clock Frequency**/
 
@@ -80,6 +81,8 @@ const StateType StateProgram[6] =
 		{stateWallpaper}
 };
 
+
+
 int main(void){
 	/**Configuration to enable the clock in 60 MHz**/
 	int mcg_clk_hz;
@@ -130,9 +133,44 @@ int main(void){
         	initialPosition();
         	lock = TRUE;
     	}
+
     	//initialPosition();
     	moveDown();
+
+    	//delay(250000);
     	//LCDNokia_clear();
+
+/*
+    	LCDNokia_bitmap((uint8*)getFrame1());
+    	delay(500000);
+
+
+    	LCDNokia_bitmap((uint8*)getFrame2());
+    	delay(500000);
+
+
+    	LCDNokia_bitmap((uint8*)getFrame3());
+    	delay(500000);
+
+
+    	LCDNokia_bitmap((uint8*)getFrame4());
+    	delay(500000);
+
+
+    	LCDNokia_bitmap((uint8*)getFrame5());
+    	delay(500000);
+
+    	LCDNokia_bitmap((uint8*)getFrame6());
+    	delay(500000);
+
+
+    	LCDNokia_bitmap((uint8*)getFrame7());
+    	delay(500000);
+
+    	LCDNokia_bitmap((uint8*)getFrame8());
+    	delay(500000);
+ */
+
     }
     return 0;
 }
