@@ -16,7 +16,7 @@
 
 #ifndef SPI_H_
 #define SPI_H_
-#include <MK64F12.h>
+#include "MK64F12.h"
 #include "DataTypeDefinitions.h"
 #include "GPIO.h"
 

@@ -11,9 +11,6 @@
  */
 #include "MK64F12.h"
 #include "GPIO.h"
-#include "DataTypeDefinitions.h"
-#include "Buttons.h"
-
 
 static GPIO_interruptFlags_t GPIO_intrStatusFlag;
 
@@ -34,23 +31,6 @@ uint32 valuePIN(uint8 bit){
 void PORTC_IRQHandler()
 {
 	GPIO_readInterrupt(GPIO_C);
-
-	if((1<<BIT2) == GPIO_readInterrupt(GPIO_C)){
-		GPIO_intrStatusFlag.flagPortC  = TRUE;
-		Button_statusFlag(GPIO_C,BIT2);
-	}
-	if((1<<BIT5) == GPIO_readInterrupt(GPIO_C)){
-		GPIO_intrStatusFlag.flagPortC  = TRUE;
-		Button_statusFlag(GPIO_C,BIT5);
-	}
-	if((1<<BIT7) == GPIO_readInterrupt(GPIO_C)){
-		GPIO_intrStatusFlag.flagPortC  = TRUE;
-		Button_statusFlag(GPIO_C,BIT7);
-	}
-	if((1<<BIT0) == GPIO_readInterrupt(GPIO_C)){
-		GPIO_intrStatusFlag.flagPortC  = TRUE;
-		Button_statusFlag(GPIO_C,BIT0);
-	}
 
 	//GPIO_intrStatusFlag.flagPortC  = TRUE;
 	GPIO_clearInterrupt(GPIO_C);

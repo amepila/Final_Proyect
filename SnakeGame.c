@@ -9,13 +9,15 @@
 #include "SPI.h"
 #include "LCDNokia5110.h"
 #include "UART.h"
+#include "RNGA.h"
 
 #define UP				(87U)
 #define DOWN			(83U)
 #define LEFT			(65U)
 #define RIGHT			(68U)
 #define BODY			(254U)
-#define SYSTEM_CLOCK	(60000000U)
+#define TIME			(500000U)
+#define INITIAL_TIME	(1000000U)
 #define EDGE_UP			(0U)
 #define EDGE_DOWN		(6U)
 #define EDGE_LEFT		(0U)
@@ -118,6 +120,8 @@ uint8 initialPosition(void){
 	return (TRUE);
 }
 uint8 foodGenerator(void){
+
+	return TRUE;
 }
 
 Direction_Type moveUp(void){
@@ -175,14 +179,6 @@ Direction_Type moveDown(void){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
-	/*
-	if(ValueY2 == FULL_BYTE_Y2){
-		ValueY2 = BIT_LSB_Y2;
-		CounterBitY = EMPTY_BIT_Y2;
-		ValueY1++;
-		if(ValueY1 == MAX_LINES_Y1){ValueY1 = MIN_LINES_Y1;}
-	}
-	*/
 	return (DIRECTION_DOWN);
 }
 Direction_Type moveLeft(void){
@@ -229,7 +225,7 @@ Direction_Type moveRight(void){
 
 uint8 directMove(Direction_Type direction){
 
-	delay(250000);
+	delay(TIME);
 	Direction_Type(*moveFunctions)(void);
 	CurrentDirection = direction;
 
@@ -267,7 +263,7 @@ SnakeInfo_Type runSnake(void){
 		Score = 0;
 		LenghtSnake = 15;
 		flagDefault = TRUE;
-		//Delay of 2 seconds
+		delay(INITIAL_TIME);
 	}
 	currentInfo.score = Score;
 	currentInfo.lives = Lives;

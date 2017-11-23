@@ -5,8 +5,7 @@
  *      Author: Andres Hernandez
  */
 
-#include <Display.h>
-#include "States.h"
+#include "Display.h"
 #include "Phases.h"
 
 uint8 menu_Main(uint8 phase){

@@ -6,7 +6,7 @@
  */
 
 
-#include "mcg.h"
+#include "MCG.h"
 #include "MK64F12.h"
 
 
