@@ -9,7 +9,6 @@
 #include "SPI.h"
 #include "LCDNokia5110.h"
 #include "UART.h"
-#include "PIT.h"
 
 #define UP				(87U)
 #define DOWN			(83U)
@@ -131,7 +130,6 @@ Direction_Type moveUp(void){
 	}
 
 	CounterBitY--;
-
 	if(CounterBitY < LIMIT_UPCOUNT){
 		CounterBitY = LIMIT_DOWNCOUNT;
 		ValueY2 |= BIT_MSB_Y2;
@@ -232,7 +230,6 @@ Direction_Type moveRight(void){
 uint8 directMove(Direction_Type direction){
 
 	delay(250000);
-	//PIT_delay(PIT_0,SYSTEM_CLOCK,1000);
 	Direction_Type(*moveFunctions)(void);
 	CurrentDirection = direction;
 

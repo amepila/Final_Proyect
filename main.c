@@ -91,7 +91,6 @@ int main(void){
 	States_MenuType(*mainFunctions)(void);
 
 	/**Configurations of devices**/
-	//PIT_clockGating();
 	SPI_init(&SPI_Config);
 	LCDNokia_init();
 	LCDNokia_clear();
@@ -102,7 +101,6 @@ int main(void){
 	NVIC_setBASEPRI_threshold(PRIORITY_10);
 
 	/**Set the priority**/
-	//NVIC_enableInterruptAndPriotity(PIT_0, PRIORITY_5);
 	NVIC_enableInterruptAndPriotity(PORTC_IRQ, PRIORITY_5);
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_9);
 	NVIC_enableInterruptAndPriotity(UART1_IRQ, PRIORITY_9);
@@ -131,11 +129,8 @@ int main(void){
         	delay(250000);
     	}
     	moveUp();
-
-    	delay(250000);
-    	moveRight();
-    	delay(250000);
 */
+
     	runSnake();
     	//LCDNokia_clear();
 /*
@@ -169,7 +164,6 @@ int main(void){
     	LCDNokia_bitmap((uint8*)getFrame8());
     	delay(500000);
 */
-
     }
     return 0;
 }
