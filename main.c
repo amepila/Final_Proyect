@@ -56,7 +56,6 @@
 /*Init mode to output FTM*/
 #define INIT_MOD		(0.80F)
 
-
 /**Settings of SPI**/
 const SPI_ConfigType SPI_Config={
 							SPI_DISABLE_FIFO,	/**Disable fifos of SPI**/
@@ -80,8 +79,6 @@ const StateType StateProgram[6] =
 		{stateCompass},
 		{stateWallpaper}
 };
-
-
 
 int main(void){
 	/**Configuration to enable the clock in 60 MHz**/
@@ -110,7 +107,6 @@ int main(void){
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_9);
 	NVIC_enableInterruptAndPriotity(UART1_IRQ, PRIORITY_9);
 
-
 	/**Configures UART 0 to transmit/receive at 115200 bauds with a 60 MHz of clock core*/
 	UART0_init(UART_0, 60000000, BD_115200);
 	/**Configures UART 1 to transmit/receive at 9600 bauds in Bluetooth with a 60 MHz of clock core*/
@@ -133,14 +129,12 @@ int main(void){
         	initialPosition();
         	lock = TRUE;
     	}
+    	moveUp();
 
-    	//initialPosition();
-    	moveDown();
-
-    	//delay(250000);
+    	delay(250000);
     	//LCDNokia_clear();
-
 /*
+
     	LCDNokia_bitmap((uint8*)getFrame1());
     	delay(500000);
 
@@ -169,7 +163,7 @@ int main(void){
 
     	LCDNokia_bitmap((uint8*)getFrame8());
     	delay(500000);
- */
+*/
 
     }
     return 0;
