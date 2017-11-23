@@ -123,15 +123,20 @@ int main(void){
     	/**Machine states based on tags**/
     	//mainFunctions = StateProgram[currentState].stateFunction;
     	//currentState = mainFunctions();
-
+/*
     	edgeGame();
     	if(FALSE == lock){
         	initialPosition();
         	lock = TRUE;
+        	delay(250000);
     	}
     	moveUp();
 
     	delay(250000);
+    	moveRight();
+    	delay(250000);
+*/
+    	runSnake();
     	//LCDNokia_clear();
 /*
 

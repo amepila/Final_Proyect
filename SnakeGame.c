@@ -25,8 +25,8 @@
 #define FULL_BYTE_Y2	(0xFFU)
 #define MIN_LINES_Y1	(0U)
 #define MAX_LINES_Y1	(6U)
-#define LIMIT_UPCOUNT	(0U)
-#define LIMIT_DOWNCOUNT	(7U)
+#define LIMIT_UPCOUNT	(0)
+#define LIMIT_DOWNCOUNT	(7)
 #define BIT_MSB_Y2		(128U)
 #define BIT_LSB_Y2		(1U)
 
@@ -130,16 +130,16 @@ Direction_Type moveUp(void){
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
 
-	if(CounterBitY == LIMIT_UPCOUNT){
+	CounterBitY--;
+
+	if(CounterBitY < LIMIT_UPCOUNT){
 		CounterBitY = LIMIT_DOWNCOUNT;
 		ValueY2 |= BIT_MSB_Y2;
 		if(ValueY1 == MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
 		ValueY1--;
 	}
 
-	CounterBitY--;
-
-	ValueY2 |= 1>>CounterBitY;
+	ValueY2 |= 1<<CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentX[counter] = ValueX;
 		ComponentY1[counter] = ValueY1;
@@ -231,6 +231,7 @@ Direction_Type moveRight(void){
 
 uint8 directMove(Direction_Type direction){
 
+	delay(250000);
 	//PIT_delay(PIT_0,SYSTEM_CLOCK,1000);
 	Direction_Type(*moveFunctions)(void);
 	CurrentDirection = direction;
