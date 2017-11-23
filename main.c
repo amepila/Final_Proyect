@@ -15,7 +15,6 @@
 #include "UART.h"
 #include "States.h"
 #include "Frames.h"
-#include "RNGA.h"
 
 /**Macros to Clock Frequency**/
 
@@ -56,7 +55,7 @@
 /*Init mode to output FTM*/
 #define INIT_MOD		(0.80F)
 
-#define	K	(500000)
+#define	K	(250000)
 
 /**Settings of SPI**/
 const SPI_ConfigType SPI_Config={
@@ -123,9 +122,9 @@ int main(void){
     	/**Machine states based on tags**/
     	//mainFunctions = StateProgram[currentState].stateFunction;
     	//currentState = mainFunctions();
-    	//runSnake();
+    	runSnake();
 
-
+/*
     	LCDNokia_bitmap(getFrame1());
     	delay(K);
 
@@ -149,7 +148,7 @@ int main(void){
 
     	LCDNokia_bitmap(getFrame8());
     	delay(K);
-
+*/
 /*
     	LCDNokia_bitmap(getInfinite1());
     	delay(K);

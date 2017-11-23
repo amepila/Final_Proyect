@@ -121,13 +121,16 @@ uint8 initialPosition(void){
 }
 uint8 foodGenerator(void){
 
+
 	return TRUE;
 }
 
 Direction_Type moveUp(void){
 
 	uint32 counter;
+	uint32 tempValueX;
 
+	tempValueX = ComponentX[LenghtSnake - 1];
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
@@ -143,7 +146,7 @@ Direction_Type moveUp(void){
 
 	ValueY2 |= 1<<CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = ValueX;
+		ComponentX[counter] = tempValueX;
 		ComponentY1[counter] = ValueY1;
 		ComponentY2[counter] |= ValueY2;
 	}
@@ -156,7 +159,9 @@ Direction_Type moveUp(void){
 Direction_Type moveDown(void){
 
 	uint32 counter;
+	uint32 tempValueX;
 
+	tempValueX = ComponentX[LenghtSnake - 1];
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
@@ -171,7 +176,7 @@ Direction_Type moveDown(void){
 	}
 	ValueY2 |= 1<<CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = ValueX;
+		ComponentX[counter] = tempValueX;
 		ComponentY1[counter] = ValueY1;
 		ComponentY2[counter] |= ValueY2;
 	}
@@ -184,6 +189,11 @@ Direction_Type moveDown(void){
 Direction_Type moveLeft(void){
 
 	uint32 counter;
+	uint32 tempValueY1;
+	uint32 tempValueY2;
+
+	tempValueY1 = ComponentY1[LenghtSnake - 1];
+	tempValueY2 = ComponentY2[LenghtSnake - 1];
 
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
@@ -192,8 +202,8 @@ Direction_Type moveLeft(void){
 	ValueX--;
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentX[counter] = ValueX + counter;
-		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] = ValueY2;
+		ComponentY1[counter] = tempValueY1;
+		ComponentY2[counter] |= tempValueY2;
 	}
 
 	for(counter = 0; counter < LenghtSnake; counter++){
@@ -205,6 +215,11 @@ Direction_Type moveLeft(void){
 Direction_Type moveRight(void){
 
 	uint32 counter;
+	uint32 tempValueY1;
+	uint32 tempValueY2;
+
+	tempValueY1 = ComponentY1[LenghtSnake - 1];
+	tempValueY2 = ComponentY2[LenghtSnake - 1];
 
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
@@ -213,8 +228,8 @@ Direction_Type moveRight(void){
 	ValueX++;
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentX[counter] = ValueX + counter;
-		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] = ValueY2;
+		ComponentY1[counter] = tempValueY1;
+		ComponentY2[counter] |= tempValueY2;
 	}
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
