@@ -11,25 +11,27 @@
 #include "UART.h"
 #include "RNGA.h"
 
-#define UP				(87U)
-#define DOWN			(83U)
-#define LEFT			(65U)
-#define RIGHT			(68U)
-#define BODY			(254U)
-#define TIME			(500000U)
-#define INITIAL_TIME	(1000000U)
-#define EDGE_UP			(0U)
-#define EDGE_DOWN		(6U)
-#define EDGE_LEFT		(0U)
-#define EDGE_RIGHT		(84U)
-#define EMPTY_BIT_Y2	(0x00U)
-#define FULL_BYTE_Y2	(0xFFU)
-#define MIN_LINES_Y1	(0U)
-#define MAX_LINES_Y1	(6U)
+#define UP				(87)
+#define DOWN			(83)
+#define LEFT			(65)
+#define RIGHT			(68)
+#define BODY			(254)
+#define TIME			(500000)
+#define INITIAL_TIME	(1000000)
+#define EDGE_UP			(0)
+#define EDGE_DOWN		(6)
+#define EDGE_LEFT		(0)
+#define EDGE_RIGHT		(84)
+#define EMPTY_BIT_Y2	(0x00)
+#define FULL_BYTE_Y2	(0xFF)
+#define MIN_LINES_Y1	(0)
+#define MAX_LINES_Y1	(6)
 #define LIMIT_UPCOUNT	(0)
 #define LIMIT_DOWNCOUNT	(7)
-#define BIT_MSB_Y2		(128U)
-#define BIT_LSB_Y2		(1U)
+#define BIT_MSB_Y2		(128)
+#define BIT_LSB_Y2		(1)
+#define LIMIT_RIGHT		(84)
+#define LIMIT_LEFT		(0)
 
 /**Current lenght of Snake**/
 static uint32 LenghtSnake;
@@ -46,13 +48,15 @@ static uint32 ComponentY2[100];
 /**Saves the current direction of snake**/
 static Direction_Type CurrentDirection;
 /**Value of axis X**/
-static uint32 ValueX;
+static sint32 ValueX;
 /**Value of number line of axis Y**/
-static uint32 ValueY1;
+static sint32 ValueY1;
 /**Value of number of pixel of each line in axis Y**/
-static uint32 ValueY2;
+static sint32 ValueY2;
 /**Mask value to Value Y2**/
 static sint32 CounterBitY;
+/**Previous move of the snake**/
+static Direction_Type PreMove;
 
 /**Array of pointers to functions that saves the snake moves**/
 const StateMove_Type StateMove[4] =
@@ -129,9 +133,11 @@ Direction_Type moveUp(void){
 
 	uint32 counter;
 	uint32 tempValueX;
+	uint32 tmpCounterBit;
 
 	tempValueX = ComponentX[LenghtSnake - 1];
 	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentY2[counter] = EMPTY_BIT_Y2;
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
@@ -139,16 +145,22 @@ Direction_Type moveUp(void){
 	CounterBitY--;
 	if(CounterBitY < LIMIT_UPCOUNT){
 		CounterBitY = LIMIT_DOWNCOUNT;
-		ValueY2 |= BIT_MSB_Y2;
+		ValueY2 = BIT_MSB_Y2;
 		if(ValueY1 == MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
 		ValueY1--;
 	}
 
 	ValueY2 |= 1<<CounterBitY;
+	tmpCounterBit = CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentX[counter] = tempValueX;
 		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] |= ValueY2;
+		ComponentY2[counter] |= (1<<tmpCounterBit);
+		if(ComponentY2[counter] == 1){
+			tmpCounterBit = 8;
+			ValueY1--;
+		}
+		tmpCounterBit--;
 	}
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
@@ -158,11 +170,16 @@ Direction_Type moveUp(void){
 }
 Direction_Type moveDown(void){
 
+	/**General counter**/
 	uint32 counter;
-	uint32 tempValueX;
+	/**Last value of Y1**/
+	uint32 lastValueY1;
+	/**Last value of Y2**/
+	uint32 lastValueY2;
 
 	tempValueX = ComponentX[LenghtSnake - 1];
 	for(counter = 0; counter < LenghtSnake; counter++){
+		ComponentY2[counter] = EMPTY_BIT_Y2;
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
@@ -175,10 +192,15 @@ Direction_Type moveDown(void){
 		ValueY1++;
 	}
 	ValueY2 |= 1<<CounterBitY;
+	tmpCounterBit = CounterBitY;
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentX[counter] = tempValueX;
 		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] |= ValueY2;
+		ComponentY2[counter] |= (1<<tmpCounterBit++) + ValueY2;
+		if(ComponentY2[counter] == 128){
+			tmpCounterBit = 0;
+			ValueY1++;
+		}
 	}
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
@@ -188,53 +210,88 @@ Direction_Type moveDown(void){
 }
 Direction_Type moveLeft(void){
 
+	/**General counter**/
 	uint32 counter;
-	uint32 tempValueY1;
-	uint32 tempValueY2;
+	/**Last value of Y1**/
+	uint32 lastValueY1;
+	/**Last value of Y2**/
+	uint32 lastValueY2;
 
-	tempValueY1 = ComponentY1[LenghtSnake - 1];
-	tempValueY2 = ComponentY2[LenghtSnake - 1];
+	/**Save the captured value in Y1-axis**/
+	lastValueY1 = ComponentY1[LenghtSnake - 1];
+	/**Save the captured value in Y2-axis**/
+	lastValueY2 = ComponentY2[LenghtSnake - 1];
 
+	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
-	ValueX--;
+	/**Displace the snake to next position removing the first position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = ValueX + counter;
-		ComponentY1[counter] = tempValueY1;
-		ComponentY2[counter] |= tempValueY2;
+		ComponentX[counter] = ComponentX[counter + 1];
+		ComponentY1[counter] = ComponentY1[counter + 1];
+		ComponentY2[counter] = ComponentY2[counter + 1];
 	}
+	/**Decrement the value of X-axis**/
+	ValueX--;
+	/**Reset if the snake reaches the limit**/
+	if(ValueX < LIMIT_LEFT){ValueX = LIMIT_RIGHT;}
 
+	/**Redefined the last position with the new values**/
+	ComponentX[LenghtSnake - 1] = ValueX;
+	ComponentY1[LenghtSnake - 1] = lastValueY1;
+	ComponentY2[LenghtSnake - 1] = lastValueY2;
+
+	/**Print the new snake in the current position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
+	/**Return the left direction**/
 	return (DIRECTION_LEFT);
 }
 Direction_Type moveRight(void){
 
+	/**General counter**/
 	uint32 counter;
-	uint32 tempValueY1;
-	uint32 tempValueY2;
+	/**Last value of Y1**/
+	uint32 lastValueY1;
+	/**Last value of Y2**/
+	uint32 lastValueY2;
 
-	tempValueY1 = ComponentY1[LenghtSnake - 1];
-	tempValueY2 = ComponentY2[LenghtSnake - 1];
+	/**Save the captured value in Y1-axis**/
+	lastValueY1 = ComponentY1[LenghtSnake - 1];
+	/**Save the captured value in Y2-axis**/
+	lastValueY2 = ComponentY2[LenghtSnake - 1];
 
+	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
-	ValueX++;
+	/**Displace the snake to next position removing the first position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = ValueX + counter;
-		ComponentY1[counter] = tempValueY1;
-		ComponentY2[counter] |= tempValueY2;
+		ComponentX[counter] = ComponentX[counter + 1];
+		ComponentY1[counter] = ComponentY1[counter + 1];
+		ComponentY2[counter] = ComponentY2[counter + 1];
 	}
+	/**Increment the value of X-axis**/
+	ValueX++;
+	/**Reset if the snake reaches the limit**/
+	if(ValueX > LIMIT_RIGHT){ValueX = LIMIT_LEFT;}
+
+	/**Redefined the last position with the new values**/
+	ComponentX[LenghtSnake - 1] = ValueX;
+	ComponentY1[LenghtSnake - 1] = lastValueY1;
+	ComponentY2[LenghtSnake - 1] = lastValueY2;
+
+	/**Print the new snake in the current position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
+	/**Return the right direction**/
 	return (DIRECTION_RIGHT);
 }
 
