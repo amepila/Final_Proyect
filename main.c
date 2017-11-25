@@ -55,7 +55,7 @@
 /*Init mode to output FTM*/
 #define INIT_MOD		(0.80F)
 
-#define	K	(300000)
+#define	K	(500000)
 
 /**Settings of SPI**/
 const SPI_ConfigType SPI_Config={
@@ -123,7 +123,6 @@ int main(void){
     	//mainFunctions = StateProgram[currentState].stateFunction;
     	//currentState = mainFunctions();
     	runSnake();
-    	//moveRight();
 /*
     	LCDNokia_bitmap(getFrame1());
     	delay(K);

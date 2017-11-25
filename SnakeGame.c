@@ -131,81 +131,104 @@ uint8 foodGenerator(void){
 
 Direction_Type moveUp(void){
 
+	/**General counter**/
 	uint32 counter;
-	uint32 tempValueX;
-	uint32 tmpCounterBit;
+	/**Last value of X**/
+	uint32 lastValueX;
 
-	tempValueX = ComponentX[LenghtSnake - 1];
+	/**Save the captured value in Y1-axis**/
+	lastValueX = ComponentX[LenghtSnake - 1];
+
+	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentY2[counter] = EMPTY_BIT_Y2;
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
-
-	CounterBitY--;
-	if(CounterBitY < LIMIT_UPCOUNT){
-		CounterBitY = LIMIT_DOWNCOUNT;
-		ValueY2 = BIT_MSB_Y2;
-		if(ValueY1 == MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
-		ValueY1--;
-	}
-
-	ValueY2 |= 1<<CounterBitY;
-	tmpCounterBit = CounterBitY;
+	/**Displace the snake to next position removing the first position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = tempValueX;
-		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] |= (1<<tmpCounterBit);
-		if(ComponentY2[counter] == 1){
-			tmpCounterBit = 8;
-			ValueY1--;
-		}
-		tmpCounterBit--;
+		ComponentX[counter] = ComponentX[counter + 1];
+		ComponentY1[counter] = ComponentY1[counter + 1];
+		ComponentY2[counter] = ComponentY2[counter + 1];
 	}
+	/**Increment the value of X-axis**/
+	CounterBitY--;
+	/**Reset CounterBit if the snake reaches the limit in Y2**/
+	if(CounterBitY < LIMIT_UPCOUNT){
+		/**Counter bit is reseted**/
+		CounterBitY = LIMIT_DOWNCOUNT;
+		/**Value of Y2-axis is set to 128**/
+		ValueY2 = BIT_MSB_Y2;
+		/**Decrement the Y1-axis if Y2 is full**/
+		ValueY1--;
+		/**Reset Y1 is set at 6 if the limit is reached**/
+		if(ValueY1 == MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
+	}
+	/**Decrement the position to Y2**/
+	ValueY2 |= 1<<CounterBitY;
+
+	/**Redefined the last position with the new values**/
+	ComponentX[LenghtSnake - 1] = lastValueX;
+	ComponentY1[LenghtSnake - 1] = ValueY1;
+	ComponentY2[LenghtSnake - 1] = ValueY2;
+
+	/**Print the new snake in the current position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
+	/**Return the up direction**/
 	return (DIRECTION_UP);
 }
 Direction_Type moveDown(void){
 
 	/**General counter**/
 	uint32 counter;
-	/**Last value of Y1**/
-	uint32 lastValueY1;
-	/**Last value of Y2**/
-	uint32 lastValueY2;
+	/**Last value of X**/
+	uint32 lastValueX;
 
-	tempValueX = ComponentX[LenghtSnake - 1];
+	/**Save the captured value in Y1-axis**/
+	lastValueX = ComponentX[LenghtSnake - 1];
+
+	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentY2[counter] = EMPTY_BIT_Y2;
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
-
-	CounterBitY++;
-	if(CounterBitY > LIMIT_DOWNCOUNT){
-		CounterBitY = LIMIT_UPCOUNT;
-		ValueY2 = BIT_LSB_Y2;
-		if(ValueY1 == MAX_LINES_Y1){ValueY1 = MIN_LINES_Y1;}
-		ValueY1++;
-	}
-	ValueY2 |= 1<<CounterBitY;
-	tmpCounterBit = CounterBitY;
+	/**Displace the snake to next position removing the first position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentX[counter] = tempValueX;
-		ComponentY1[counter] = ValueY1;
-		ComponentY2[counter] |= (1<<tmpCounterBit++) + ValueY2;
-		if(ComponentY2[counter] == 128){
-			tmpCounterBit = 0;
-			ValueY1++;
-		}
+		ComponentX[counter] = ComponentX[counter + 1];
+		ComponentY1[counter] = ComponentY1[counter + 1];
+		ComponentY2[counter] = ComponentY2[counter + 1];
 	}
+	/**Increment the value of X-axis**/
+	CounterBitY++;
+	/**Reset CounterBit if the snake reaches the limit in Y2**/
+	if(CounterBitY > LIMIT_DOWNCOUNT){
+		/**Counter bit is reseted**/
+		CounterBitY = LIMIT_UPCOUNT;
+		/**Value of Y2-axis is set at 1**/
+		ValueY2 = BIT_LSB_Y2;
+		/**Increment the Y1-axis if Y2 is full**/
+		ValueY1++;
+		/**Reset Y1 is set at 0 if the limit is reached**/
+		if(ValueY1 == MAX_LINES_Y1){ValueY1 = MIN_LINES_Y1;}
+	}
+	/**Increment the position to Y2**/
+	ValueY2 |= 1<<CounterBitY;
+
+	/**Redefined the last position with the new values**/
+	ComponentX[LenghtSnake - 1] = lastValueX;
+	ComponentY1[LenghtSnake - 1] = ValueY1;
+	ComponentY2[LenghtSnake - 1] = ValueY2;
+
+	/**Print the new snake in the current position**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
+	/**Return the down direction**/
 	return (DIRECTION_DOWN);
 }
 Direction_Type moveLeft(void){
