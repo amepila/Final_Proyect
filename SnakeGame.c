@@ -32,13 +32,12 @@
 #define BIT_LSB_Y2		(1)
 #define LIMIT_RIGHT		(84)
 #define LIMIT_LEFT		(0)
+#define LIMIT_BIT8		(255)
 
-/**Current lenght of Snake**/
+/**Current length of Snake**/
 static uint32 LenghtSnake;
-/**Number of points in the game**/
-static uint32 Score;
-/**Number of lives in the game**/
-static uint32 Lives;
+/**Save the current info of the game**/
+static SnakeInfo_Type InfoSnake;
 /**Axis X of snake position**/
 static uint32 ComponentX[100];
 /**Axis Y of snake position, is the number of line**/
@@ -68,7 +67,7 @@ const StateMove_Type StateMove[4] =
 };
 
 void edgeGame(void){
-
+	/**General counter**/
 	uint8 counter;
 
 	/**Draw the Top edge*/
@@ -99,16 +98,28 @@ void edgeGame(void){
 }
 
 uint8 initialPosition(void){
+
+	/**General counter**/
 	uint8 counter;
 
+	/**Initial value to X**/
 	ValueX = 14;
+	/**Initial value to Y1**/
 	ValueY1 = 4;
+	/**Initial value to Y2**/
 	ValueY2 = 1;
+	/**Initial value to BIT**/
 	CounterBitY = 0;
-
+	/**Initial length of snake**/
 	LenghtSnake = 15;
+
+	/**Initial axis in Nokia**/
 	LCDNokia_gotoXY(30,4);
+	/**Initial direction**/
 	CurrentDirection = DIRECTION_RIGHT;
+	/**Initial info to game**/
+	InfoSnake.lives = 3;
+	InfoSnake.score = 0;
 
 	/**Save the initial coordinates**/
 	for(counter = 0; counter < LenghtSnake; counter++){
@@ -116,16 +127,38 @@ uint8 initialPosition(void){
 		ComponentY1[counter] = ValueY1;
 		ComponentY2[counter] = ValueY2;
 	}
-	/**Draw the snake**/
+	/**Print the position initial to snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
+	/**Success in this function**/
 	return (TRUE);
 }
+
 uint8 foodGenerator(void){
 
+	/**Structure with food axis**/
+	Food_Type foodSnake;
 
+	/**Get the food in X axis and adjust to new parameters**/
+	foodSnake.foodX = (sint8)getRandomData();
+	foodSnake.foodX -= (LIMIT_BIT8 - EDGE_RIGHT);
+
+	/**Get the food in Y1 axis and adjust to new parameters**/
+	foodSnake.foodY1 = (sint8)getRandomData();
+	foodSnake.foodY1 -= (LIMIT_BIT8 - EDGE_DOWN);
+
+	/**Get the food in Y2 axis and adjust to new parameters**/
+	foodSnake.foodY2 = (sint8)getRandomData();
+	foodSnake.foodY2 -= (LIMIT_BIT8 - LIMIT_DOWNCOUNT);
+	foodSnake.foodY2 = 1<<foodSnake.foodY2;
+
+	/**Print the food to snake**/
+	LCDNokia_gotoXY(foodSnake.foodX,foodSnake.foodY1);
+	LCDNokia_writeByte(LCD_DATA,foodSnake.foodY2);
+
+	/**Success in this function**/
 	return TRUE;
 }
 
@@ -179,6 +212,7 @@ Direction_Type moveUp(void){
 	/**Return the up direction**/
 	return (DIRECTION_UP);
 }
+
 Direction_Type moveDown(void){
 
 	/**General counter**/
@@ -229,6 +263,7 @@ Direction_Type moveDown(void){
 	/**Return the down direction**/
 	return (DIRECTION_DOWN);
 }
+
 Direction_Type moveLeft(void){
 
 	/**General counter**/
@@ -242,6 +277,7 @@ Direction_Type moveLeft(void){
 	lastValueY1 = ComponentY1[LenghtSnake - 1];
 	/**Save the captured value in Y2-axis**/
 	lastValueY2 = 1<<CounterBitY;
+	/**Assign the new value to Y2**/
 	ValueY2 = lastValueY2;
 
 	/**Loop to clear the previous snake to print the new snake**/
@@ -273,6 +309,7 @@ Direction_Type moveLeft(void){
 	/**Return the left direction**/
 	return (DIRECTION_LEFT);
 }
+
 Direction_Type moveRight(void){
 
 	/**General counter**/
@@ -282,11 +319,11 @@ Direction_Type moveRight(void){
 	/**Last value of Y2**/
 	uint32 lastValueY2;
 
-
 	/**Save the captured value in Y1-axis**/
 	lastValueY1 = ComponentY1[LenghtSnake - 1];
 	/**Save the captured value in Y2-axis**/
 	lastValueY2 = 1<<CounterBitY;
+	/**Assign the new value to Y2**/
 	ValueY2 = lastValueY2;
 
 	/**Loop to clear the previous snake to print the new snake**/
@@ -321,21 +358,31 @@ Direction_Type moveRight(void){
 
 uint8 directMove(Direction_Type direction){
 
-	delay(TIME);
+	/**States machine to snake moves with the current direction**/
 	Direction_Type(*moveFunctions)(void);
 	CurrentDirection = direction;
+	/**Wait the next move of snake**/
+	delay(TIME);
 
+	/**Pointer to functions to elect the move**/
 	moveFunctions = StateMove[CurrentDirection].stateMove;
+	/**Execute the move**/
 	CurrentDirection = moveFunctions();
+	/**Success with the function**/
 	return TRUE;
 }
 
 uint8 moveSnake(void){
 
+	/**Detect the commands to move the snake**/
 	if(getUART0_flag()){
+		/**Character W is move up**/
 		if(getUART0_mailBox() == UP){CurrentDirection = DIRECTION_UP;}
+		/**Character S is move down**/
 		if(getUART0_mailBox() == DOWN){CurrentDirection = DIRECTION_DOWN;}
+		/**Character A is move left**/
 		if(getUART0_mailBox() == LEFT){CurrentDirection = DIRECTION_LEFT;}
+		/**Character D is move right**/
 		if(getUART0_mailBox() == RIGHT){CurrentDirection = DIRECTION_RIGHT;}
 
 		/**clear the reception flag*/
@@ -343,33 +390,30 @@ uint8 moveSnake(void){
 	}
 	/**Clear the mailbox**/
 	clearUART0_mailbox();
+	/**Execute the function to move the snake**/
 	directMove(CurrentDirection);
+	/**Success with the function**/
 	return TRUE;
 }
 
-SnakeInfo_Type runSnake(void){
+uint8 runSnake(void){
 
-	static SnakeInfo_Type currentInfo;
+	/**Lock to execute once the initial position**/
 	static uint8 flagDefault = FALSE;
 
+	/**Create the borders of the game**/
 	edgeGame();
+	/**Draw the initial conditionals and wait 1 second**/
 	if(FALSE == flagDefault){
-		initialPosition();
-		Lives = 3;
-		Score = 0;
-		LenghtSnake = 15;
+		initialConditions();
 		flagDefault = TRUE;
 		delay(INITIAL_TIME);
 	}
-	currentInfo.score = Score;
-	currentInfo.lives = Lives;
+	/**Move the snake**/
 	moveSnake();
 
-	if(currentInfo.lives == 0){
-		flagDefault = FALSE;
-		Lives = 3;
-		currentInfo.score = Score;
-		Score = 0;
-	}
-	return (currentInfo);
+	/**If the player looses then reset the initial conditions**/
+	if(InfoSnake.lives == 0){flagDefault = FALSE;}
+	/**Return the score of the game played**/
+	return (InfoSnake.score);
 }
