@@ -141,7 +141,6 @@ Direction_Type moveUp(void){
 
 	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentY2[counter] = EMPTY_BIT_Y2;
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
@@ -162,7 +161,7 @@ Direction_Type moveUp(void){
 		/**Decrement the Y1-axis if Y2 is full**/
 		ValueY1--;
 		/**Reset Y1 is set at 6 if the limit is reached**/
-		if(ValueY1 == MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
+		if(ValueY1 < MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
 	}
 	/**Decrement the position to Y2**/
 	ValueY2 |= 1<<CounterBitY;
@@ -192,7 +191,6 @@ Direction_Type moveDown(void){
 
 	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
-		ComponentY2[counter] = EMPTY_BIT_Y2;
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA, 0x00);
 	}
@@ -213,7 +211,7 @@ Direction_Type moveDown(void){
 		/**Increment the Y1-axis if Y2 is full**/
 		ValueY1++;
 		/**Reset Y1 is set at 0 if the limit is reached**/
-		if(ValueY1 == MAX_LINES_Y1){ValueY1 = MIN_LINES_Y1;}
+		if(ValueY1 > MAX_LINES_Y1){ValueY1 = MIN_LINES_Y1;}
 	}
 	/**Increment the position to Y2**/
 	ValueY2 |= 1<<CounterBitY;
