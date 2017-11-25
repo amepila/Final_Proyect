@@ -241,7 +241,8 @@ Direction_Type moveLeft(void){
 	/**Save the captured value in Y1-axis**/
 	lastValueY1 = ComponentY1[LenghtSnake - 1];
 	/**Save the captured value in Y2-axis**/
-	lastValueY2 = ComponentY2[LenghtSnake - 1];
+	lastValueY2 = 1<<CounterBitY;
+	ValueY2 = lastValueY2;
 
 	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
@@ -281,10 +282,12 @@ Direction_Type moveRight(void){
 	/**Last value of Y2**/
 	uint32 lastValueY2;
 
+
 	/**Save the captured value in Y1-axis**/
 	lastValueY1 = ComponentY1[LenghtSnake - 1];
 	/**Save the captured value in Y2-axis**/
-	lastValueY2 = ComponentY2[LenghtSnake - 1];
+	lastValueY2 = 1<<CounterBitY;
+	ValueY2 = lastValueY2;
 
 	/**Loop to clear the previous snake to print the new snake**/
 	for(counter = 0; counter < LenghtSnake; counter++){
