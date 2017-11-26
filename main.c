@@ -15,6 +15,7 @@
 #include "UART.h"
 #include "States.h"
 #include "Frames.h"
+#include "RNGA.h"
 
 /**Macros to Clock Frequency**/
 
@@ -38,7 +39,7 @@
 #define SLOW_IRC 0
 /* Crystal or canned oscillator clock input */
 #define CLK0_TYPE 0
-/* PLL predivider value */
+/* PLL pre-divider value */
 #define PLL0_PRDIV 25
 /* PLL multiplier value*/
 #define PLL0_VDIV 30
@@ -55,7 +56,6 @@
 /*Init mode to output FTM*/
 #define INIT_MOD		(0.80F)
 
-#define	K	(500000)
 
 /**Settings of SPI**/
 const SPI_ConfigType SPI_Config={
@@ -109,7 +109,7 @@ int main(void){
 
 	/**Configures UART 0 to transmit/receive at 115200 bauds with a 60 MHz of clock core*/
 	UART0_init(UART_0, 60000000, BD_115200);
-	/**Configures UART 1 to transmit/receive at 9600 bauds in Bluetooth with a 60 MHz of clock core*/
+	/**Configures UART 1 to transmit/receive at 9600 bauds in GSM module with a 60 MHz of clock core*/
 	UART1_init(UART_1, 60000000, BD_9600);
 	/**Enables the UART interrupts*/
 	UART0_interruptEnable(UART_0);
@@ -122,181 +122,9 @@ int main(void){
     	/**Machine states based on tags**/
     	//mainFunctions = StateProgram[currentState].stateFunction;
     	//currentState = mainFunctions();
-    	runSnake();
+    	printLoading();
 
-/*
-    	LCDNokia_bitmap(getFrame1());
-    	delay(K);
 
-    	LCDNokia_bitmap(getFrame2());
-    	delay(K);
-
-    	LCDNokia_bitmap(getFrame3());
-    	delay(K);
-
-    	LCDNokia_bitmap(getFrame4());
-    	delay(K);
-
-    	LCDNokia_bitmap(getFrame5());
-    	delay(K);
-
-    	LCDNokia_bitmap(getFrame6());
-    	delay(K);
-
-    	LCDNokia_bitmap(getFrame7());
-    	delay(K);
-
-    	LCDNokia_bitmap(getFrame8());
-    	delay(K);
-*/
-/*
-    	LCDNokia_bitmap(getInfinite1());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite2());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite3());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite4());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite5());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite6());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite7());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite8());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite9());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite10());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite11());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite12());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite13());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite14());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite15());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite16());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite17());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite18());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite19());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite20());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite21());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite22());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite23());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite24());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite25());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite26());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite27());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite28());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite29());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite30());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite31());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite32());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite33());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite34());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite35());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite36());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite37());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite38());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite39());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite40());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite41());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite42());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite43());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite44());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite45());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite46());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite47());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite48());
-    	delay(K);
-
-    	LCDNokia_bitmap(getInfinite49());
-    	delay(K);
-*/
     }
     return 0;
 }

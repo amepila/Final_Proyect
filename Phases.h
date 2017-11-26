@@ -20,7 +20,8 @@
 /**
  * \brief This data type define the data type in MAIN MENU
  */
-typedef enum{INITIAL_LOAD,
+typedef enum{INITIAL_LOAD1,
+			INITIAL_LOAD2,
 			GENERAL_VIEW
 }PhaseStateMenu_Type;
 
@@ -94,7 +95,8 @@ typedef const struct PhaseSnake{
 
 void cleanContact(uint8 contact);
 
-PhaseMainMenu_Type initialLoad(PhaseMainMenu_Type data);
+PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data);
+PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data);
 PhaseMainMenu_Type generalView(PhaseMainMenu_Type data);
 
 PhaseContacts_Type contactsMenu(PhaseContacts_Type data);

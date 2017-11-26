@@ -47,6 +47,6 @@ Direction_Type moveLeft(void);
 Direction_Type moveRight(void);
 uint8 directMove(Direction_Type direction);
 uint8 moveSnake(void);
-uint8 runSnake(void);
+SnakeInfo_Type runSnake(void);
 
 #endif /* SNAKEGAME_H_ */

@@ -80,6 +80,8 @@ static sint32 CounterBitY;
 static Food_Type FoodSnake;
 /**Flag to generate new food**/
 static uint8 FlagFood = TRUE;
+/**Lock to execute once the initial position**/
+static uint8 FlagDefault = TRUE;
 
 /**Array of pointers to functions that saves the snake moves**/
 const StateMove_Type StateMove[4] =
@@ -204,6 +206,7 @@ void foodEatenX(uint32 axisX, uint32 axisY1, uint32 axisY2){
 	/**If the food is eaten then snake grows**/
 	if(counter == SUCCESS_FOOD){
 		LenghtSnake++;
+		InfoSnake.score++;
 		FlagFood = TRUE;
 	}
 }
@@ -223,6 +226,7 @@ void foodEatenY(uint32 axisX, uint32 axisY1){
 	/**If the food is eaten then snake grows**/
 	if(counter == SUCCESS_FOOD){
 		LenghtSnake++;
+		InfoSnake.score++;
 		FlagFood = TRUE;
 	}
 }
@@ -301,6 +305,8 @@ Direction_Type moveUp(void){
 		ComponentY1[LenghtSnake - 1] = ValueY1;
 		ComponentY2[LenghtSnake - 1] = ValueY2;
 	}
+	/**If the snake reaches the limit the game is reseted**/
+	if((MIN_LINES_Y1== ValueY1) && (LIMIT_UPCOUNT == ValueY2)){FlagDefault = TRUE;}
 	/**Return the up direction**/
 	return (DIRECTION_UP);
 }
@@ -379,6 +385,8 @@ Direction_Type moveDown(void){
 		ComponentY1[LenghtSnake - 1] = ValueY1;
 		ComponentY2[LenghtSnake - 1] = ValueY2;
 	}
+	/**If the snake reaches the limit the game is reseted**/
+	if((MAX_LINES_Y1== ValueY1) && (LIMIT_DOWNCOUNT == ValueY2)){FlagDefault = TRUE;}
 	/**Return the down direction**/
 	return (DIRECTION_DOWN);
 }
@@ -442,6 +450,8 @@ Direction_Type moveLeft(void){
 		ComponentY1[LenghtSnake - 1] = lastValueY1;
 		ComponentY2[LenghtSnake - 1] = lastValueY2;
 	}
+	/**If the snake reaches the limit the game is reseted**/
+	if(LIMIT_LEFT == ValueX){FlagDefault = TRUE;}
 	/**Return the left direction**/
 	return (DIRECTION_LEFT);
 }
@@ -505,6 +515,8 @@ Direction_Type moveRight(void){
 		ComponentY1[LenghtSnake - 1] = lastValueY1;
 		ComponentY2[LenghtSnake - 1] = lastValueY2;
 	}
+	/**If the snake reaches the limit the game is reseted**/
+	if(LIMIT_RIGHT == ValueX){FlagDefault = TRUE;}
 	/**Return the right direction**/
 	return (DIRECTION_RIGHT);
 }
@@ -549,16 +561,14 @@ uint8 moveSnake(void){
 	return TRUE;
 }
 
-uint8 runSnake(void){
-
-	/**Lock to execute once the initial position**/
-	static uint8 flagDefault = FALSE;
+SnakeInfo_Type runSnake(void){
 
 	/**Draw the initial conditionals and wait 1 second**/
-	if(FALSE == flagDefault){
+	if(TRUE == FlagDefault){
 		initialConditions();
-		flagDefault = TRUE;
+		FlagDefault = FALSE;
 		delay(INITIAL_TIME);
+		LCDNokia_clear();
 	}
 	/**Generate the food until is captured**/
 	if(TRUE == FlagFood){foodGenerator();}
@@ -570,8 +580,6 @@ uint8 runSnake(void){
 	/**Move the snake**/
 	moveSnake();
 
-	/**If the player looses then reset the initial conditions**/
-	if(InfoSnake.lives == 0){flagDefault = FALSE;}
 	/**Return the score of the game played**/
-	return (InfoSnake.score);
+	return (InfoSnake);
 }

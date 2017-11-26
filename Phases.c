@@ -9,6 +9,7 @@
 #include "Phases.h"
 #include "I2CE2PROM.h"
 #include "SnakeGame.h"
+#include "Frames.h"
 
 #define POSITION_NAME		(0U)
 #define POSITION_NUMBER 	(2000U)
@@ -60,7 +61,6 @@ void cleanContact(uint8 contact){
 		writeMemory(positionName, REGISTER_EMPTY);
 		E2PROMdelay(65000);
 	}
-	counter = 0;
 
 	positionNumber = positionName + POSITION_NUMBER;
 	for(counter = 0; counter < 12; counter++){
@@ -69,12 +69,25 @@ void cleanContact(uint8 contact){
 	}
 }
 
-PhaseMainMenu_Type initialLoad(PhaseMainMenu_Type data){
+PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data){
+
 	/**Create the variable with current data**/
 	static PhaseMainMenu_Type currentMainMenu1;
 
-	//Load The system and calibration of Compass
-	//Frames LCD
+	printLoading();
+	delay(8000000);
+
+	/**Set with the current state and phase**/
+	currentMainMenu1.phaseState = INITIAL_LOAD2;
+	currentMainMenu1.stateMain = data.stateMain;
+
+	return (currentMainMenu1);
+}
+
+PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseMainMenu_Type currentMainMenu1;
 
 	NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
 	NoGamers = Convert_wordASCIItoDATA(readMemory(POSITION_GAMERS));
@@ -94,6 +107,8 @@ PhaseMainMenu_Type generalView(PhaseMainMenu_Type data){
 	/**Set with the current state and phase**/
 	currentMainMenu2.phaseState = data.phaseState;
 	currentMainMenu2.stateMain = data.stateMain;
+
+	//Frame of Menu
 
 	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
@@ -122,6 +137,8 @@ PhaseContacts_Type contactsMenu(PhaseContacts_Type data){
 	currentContacts1.phaseState = data.phaseState;
 	currentContacts1.stateMain = data.stateMain;
 
+	//Frame of ContactMenu
+
 	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
 		/**Comparison between the pressed keys to continue with next main state**/
@@ -145,6 +162,8 @@ PhaseContacts_Type viewContacts(PhaseContacts_Type data){
 	/**Set with the current state and phase**/
 	currentContacts2.phaseState = data.phaseState;
 	currentContacts2.stateMain = data.stateMain;
+
+	//Frame of edit or back
 
 	if(getUART0_flag()){
 		if(getUART0_mailBox() == ASCII_E){currentContacts2.phaseState = EDIT_CONTACTS;}
@@ -171,6 +190,8 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 	currentContacts3.phaseState = data.phaseState;
 	currentContacts3.stateMain = data.stateMain;
 	currentContacts3.noContact = NoContacts;
+
+	//Enter name and number
 
 	/**Verifies if the registers are full**/
 	if(NoContacts != FULL_CONTACTS){
@@ -227,6 +248,8 @@ PhaseContacts_Type editContacts(PhaseContacts_Type data){
 	/**Set with the current state and phase**/
 	currentContacts4.phaseState = data.phaseState;
 	currentContacts4.stateMain = data.stateMain;
+
+	//Frame to show the contact list and button to edit it
 
 	if(getUART0_flag()){
 		if(getUART0_mailBox() == ASCII_0){cleanContact(1); currentContacts4.noContact = 1;}
@@ -296,13 +319,19 @@ PhaseSnake_Type startGame(PhaseSnake_Type data){
 	/**Create the variable with current data**/
 	static PhaseSnake_Type currentSnake1;
 
-	//Display the initial menu
+	/**Show the menu of the game**/
+	printSnakeMenuFrame();
 
 	currentSnake1.phaseState = START_GAME;
 	currentSnake1.stateMain = SNAKE_GAME;
 	/**Press any key to continue**/
 	if(getUART0_flag()){
-		currentSnake1.phaseState = RUN_GAME;
+		if(getUART0_mailBox() == ASCII_SPACE){
+			currentSnake1.phaseState = RUN_GAME;
+		}
+		if(getUART0_mailBox() == ASCII_ESC){
+			currentSnake1.stateMain = GENERAL_VIEW;
+		}
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}

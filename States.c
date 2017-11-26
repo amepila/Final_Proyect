@@ -9,9 +9,10 @@
 #include "States.h"
 #include "Phases.h"
 
-const PhasePtrMainMenu_Type phasesMainMenu[2] =
+const PhasePtrMainMenu_Type phasesMainMenu[3] =
 {
-		{initialLoad},
+		{initialLoad1},
+		{initialLoad2},
 		{generalView}
 };
 const PhasePtrContacts_Type phasesContacts[5] =
@@ -31,7 +32,7 @@ const PhasePtrSnake_Type phasesSnake[3] =
 
 States_MenuType stateMainMenu(void){
 
-	static PhaseStateMenu_Type phase = INITIAL_LOAD;
+	static PhaseStateMenu_Type phase = INITIAL_LOAD1;
 	static PhaseMainMenu_Type phaseMain;
 	PhaseMainMenu_Type(*mainMenuFunctions)(PhaseMainMenu_Type);
 	phaseMain.stateMain = MAIN_MENU;
