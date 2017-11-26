@@ -11,28 +11,49 @@
 #include "UART.h"
 #include "RNGA.h"
 
+/**ASCII W to move up**/
 #define UP				(87)
+/**ASCII S to move down**/
 #define DOWN			(83)
+/**ASCII A to move left**/
 #define LEFT			(65)
+/**ASCII D to move right**/
 #define RIGHT			(68)
-#define BODY			(254)
+/**Time to launch the new snake**/
 #define TIME			(500000)
+/**Time to wait the initial game**/
 #define INITIAL_TIME	(1000000)
+/**Coordinate of edge up**/
 #define EDGE_UP			(0)
+/**Coordinate of edge down**/
 #define EDGE_DOWN		(6)
+/**Coordinate of edge left**/
 #define EDGE_LEFT		(0)
+/**Coordinate of edge right**/
 #define EDGE_RIGHT		(84)
+/**Bit of Y2 is empty**/
 #define EMPTY_BIT_Y2	(0x00)
+/**Bit of y2 is full**/
 #define FULL_BYTE_Y2	(0xFF)
+/**Minimum of lines in Y1**/
 #define MIN_LINES_Y1	(0)
+/**Maximum lines in Y1**/
 #define MAX_LINES_Y1	(6)
+/**Limit of count in BitY2**/
 #define LIMIT_UPCOUNT	(0)
+/**Limit of count in BitY2**/
 #define LIMIT_DOWNCOUNT	(7)
+/**Bit MSB in Y2**/
 #define BIT_MSB_Y2		(128)
+/**Bit LSB in Y2**/
 #define BIT_LSB_Y2		(1)
+/**Limit in the right border**/
 #define LIMIT_RIGHT		(84)
+/**Limit in the left border**/
 #define LIMIT_LEFT		(0)
+/**Limit of count in Y2**/
 #define LIMIT_BIT8		(255)
+/**Food eaten**/
 #define SUCCESS_FOOD	(3)
 
 /**Current length of Snake**/
@@ -196,7 +217,7 @@ void foodEatenY(uint32 axisX, uint32 axisY1){
 	if(FoodSnake.foodX == axisX){counter++;}
 	/**Comparison with axis Y1**/
 	if(FoodSnake.foodY1 == axisY1){counter++;}
-	/**Comparison with axis Y2**/
+	/**Comparison with bit of Y2**/
 	if(FoodSnake.bitY2 == CounterBitY){counter++;}
 
 	/**If the food is eaten then snake grows**/
