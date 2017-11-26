@@ -2199,27 +2199,27 @@ uint32 getTestFrame(void){
 }
 
 uint32 getFrame1(void){
-	return(frame1);
+	return((uint32)frame1);
 }
 
 uint32 getFrame2(void){
-	return(frame2);
+	return((uint32)frame2);
 }
 
 uint32 getFrame3(void){
-	return(frame3);
+	return((uint32)frame3);
 }
 
 uint32 getFrame4(void){
-	return(frame4);
+	return((uint32)frame4);
 }
 
 uint32 getFrame5(void){
-	return(frame5);
+	return((uint32)frame5);
 }
 
 uint32 getFrame6(void){
-	return(frame6);
+	return((uint32)frame6);
 }
 
 uint32 getFrame7(void){

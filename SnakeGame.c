@@ -33,6 +33,7 @@
 #define LIMIT_RIGHT		(84)
 #define LIMIT_LEFT		(0)
 #define LIMIT_BIT8		(255)
+#define SUCCESS_FOOD	(3)
 
 /**Current length of Snake**/
 static uint32 LenghtSnake;
@@ -54,8 +55,10 @@ static sint32 ValueY1;
 static sint32 ValueY2;
 /**Mask value to Value Y2**/
 static sint32 CounterBitY;
-/**Previous move of the snake**/
-static Direction_Type PreMove;
+/**Coordinates to the food**/
+static Food_Type FoodSnake;
+/**Flag to generate new food**/
+static uint8 FlagFood = TRUE;
 
 /**Array of pointers to functions that saves the snake moves**/
 const StateMove_Type StateMove[4] =
@@ -97,7 +100,7 @@ void edgeGame(void){
 	}
 }
 
-uint8 initialPosition(void){
+uint8 initialConditions(void){
 
 	/**General counter**/
 	uint8 counter;
@@ -121,6 +124,9 @@ uint8 initialPosition(void){
 	InfoSnake.lives = 3;
 	InfoSnake.score = 0;
 
+	/**Create the borders of the game**/
+	//edgeGame();
+
 	/**Save the initial coordinates**/
 	for(counter = 0; counter < LenghtSnake; counter++){
 		ComponentX[counter] = ValueX + counter;
@@ -138,28 +144,66 @@ uint8 initialPosition(void){
 
 uint8 foodGenerator(void){
 
-	/**Structure with food axis**/
-	Food_Type foodSnake;
-
 	/**Get the food in X axis and adjust to new parameters**/
-	foodSnake.foodX = (sint8)getRandomData();
-	foodSnake.foodX -= (LIMIT_BIT8 - EDGE_RIGHT);
+	FoodSnake.foodX = getRandomData();
+	FoodSnake.foodX %= LIMIT_RIGHT;
 
 	/**Get the food in Y1 axis and adjust to new parameters**/
-	foodSnake.foodY1 = (sint8)getRandomData();
-	foodSnake.foodY1 -= (LIMIT_BIT8 - EDGE_DOWN);
+	FoodSnake.foodY1 = getRandomData();
+	FoodSnake.foodY1 %= MAX_LINES_Y1;
 
 	/**Get the food in Y2 axis and adjust to new parameters**/
-	foodSnake.foodY2 = (sint8)getRandomData();
-	foodSnake.foodY2 -= (LIMIT_BIT8 - LIMIT_DOWNCOUNT);
-	foodSnake.foodY2 = 1<<foodSnake.foodY2;
+	FoodSnake.foodY2 = getRandomData();
+	FoodSnake.foodY2 %= LIMIT_DOWNCOUNT;
+	FoodSnake.bitY2 = FoodSnake.foodY2;
+	FoodSnake.foodY2 = 1<<FoodSnake.foodY2;
 
 	/**Print the food to snake**/
-	LCDNokia_gotoXY(foodSnake.foodX,foodSnake.foodY1);
-	LCDNokia_writeByte(LCD_DATA,foodSnake.foodY2);
+	LCDNokia_gotoXY(FoodSnake.foodX,FoodSnake.foodY1);
+	LCDNokia_writeByte(LCD_DATA,FoodSnake.foodY2);
 
+	/**Lock this function until the snake eats the food*/
+	FlagFood = FALSE;
 	/**Success in this function**/
 	return TRUE;
+}
+
+void foodEatenX(uint32 axisX, uint32 axisY1, uint32 axisY2){
+
+	/**Counter of success**/
+	uint8 counter = 0;
+
+	/**Comparison with axis X**/
+	if(FoodSnake.foodX == axisX){counter++;}
+	/**Comparison with axis Y1**/
+	if(FoodSnake.foodY1 == axisY1){counter++;}
+	/**Comparison with axis Y2**/
+	if(FoodSnake.foodY2 == axisY2){counter++;}
+
+	/**If the food is eaten then snake grows**/
+	if(counter == SUCCESS_FOOD){
+		LenghtSnake++;
+		FlagFood = TRUE;
+	}
+}
+
+void foodEatenY(uint32 axisX, uint32 axisY1){
+
+	/**Counter of success**/
+	uint8 counter = 0;
+
+	/**Comparison with axis X**/
+	if(FoodSnake.foodX == axisX){counter++;}
+	/**Comparison with axis Y1**/
+	if(FoodSnake.foodY1 == axisY1){counter++;}
+	/**Comparison with axis Y2**/
+	if(FoodSnake.bitY2 == CounterBitY){counter++;}
+
+	/**If the food is eaten then snake grows**/
+	if(counter == SUCCESS_FOOD){
+		LenghtSnake++;
+		FlagFood = TRUE;
+	}
 }
 
 Direction_Type moveUp(void){
@@ -183,7 +227,7 @@ Direction_Type moveUp(void){
 		ComponentY1[counter] = ComponentY1[counter + 1];
 		ComponentY2[counter] = ComponentY2[counter + 1];
 	}
-	/**Increment the value of X-axis**/
+	/**Increment the value of position in Y**/
 	CounterBitY--;
 	/**Reset CounterBit if the snake reaches the limit in Y2**/
 	if(CounterBitY < LIMIT_UPCOUNT){
@@ -208,6 +252,33 @@ Direction_Type moveUp(void){
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
+	/**Verifies if the snake found the food**/
+	foodEatenY(ComponentX[LenghtSnake - 1],
+				ComponentY1[LenghtSnake - 1]);
+
+	/**If the snake ate then is added a new position**/
+	if(TRUE == FlagFood){
+		/**Increment the value of position in Y**/
+		CounterBitY--;
+		/**Reset CounterBit if the snake reaches the limit in Y2**/
+		if(CounterBitY < LIMIT_UPCOUNT){
+			/**Counter bit is reseted**/
+			CounterBitY = LIMIT_DOWNCOUNT;
+			/**Value of Y2-axis is set to 128**/
+			ValueY2 = BIT_MSB_Y2;
+			/**Decrement the Y1-axis if Y2 is full**/
+			ValueY1--;
+			/**Reset Y1 is set at 6 if the limit is reached**/
+			if(ValueY1 < MIN_LINES_Y1){ValueY1 = MAX_LINES_Y1;}
+		}
+		/**Decrement the position to Y2**/
+		ValueY2 |= 1<<CounterBitY;
+
+		/**Add the new position to grown snake**/
+		ComponentX[LenghtSnake - 1] = lastValueX;
+		ComponentY1[LenghtSnake - 1] = ValueY1;
+		ComponentY2[LenghtSnake - 1] = ValueY2;
 	}
 	/**Return the up direction**/
 	return (DIRECTION_UP);
@@ -234,7 +305,7 @@ Direction_Type moveDown(void){
 		ComponentY1[counter] = ComponentY1[counter + 1];
 		ComponentY2[counter] = ComponentY2[counter + 1];
 	}
-	/**Increment the value of X-axis**/
+	/**Increment the value of position in Y**/
 	CounterBitY++;
 	/**Reset CounterBit if the snake reaches the limit in Y2**/
 	if(CounterBitY > LIMIT_DOWNCOUNT){
@@ -259,6 +330,33 @@ Direction_Type moveDown(void){
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
+	/**Verifies if the snake found the food**/
+	foodEatenY(ComponentX[LenghtSnake - 1],
+				ComponentY1[LenghtSnake - 1]);
+
+	/**If the snake ate then is added a new position**/
+	if(TRUE == FlagFood){
+		/**Increment the value of position in Y**/
+		CounterBitY++;
+		/**Reset CounterBit if the snake reaches the limit in Y2**/
+		if(CounterBitY > LIMIT_DOWNCOUNT){
+			/**Counter bit is reseted**/
+			CounterBitY = LIMIT_UPCOUNT;
+			/**Value of Y2-axis is set at 1**/
+			ValueY2 = BIT_LSB_Y2;
+			/**Increment the Y1-axis if Y2 is full**/
+			ValueY1++;
+			/**Reset Y1 is set at 0 if the limit is reached**/
+			if(ValueY1 > MAX_LINES_Y1){ValueY1 = MIN_LINES_Y1;}
+		}
+		/**Increment the position to Y2**/
+		ValueY2 |= 1<<CounterBitY;
+
+		/**Add the new position to grown snake**/
+		ComponentX[LenghtSnake - 1] = lastValueX;
+		ComponentY1[LenghtSnake - 1] = ValueY1;
+		ComponentY2[LenghtSnake - 1] = ValueY2;
 	}
 	/**Return the down direction**/
 	return (DIRECTION_DOWN);
@@ -306,6 +404,23 @@ Direction_Type moveLeft(void){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
 	}
+	/**Verifies if the snake found the food**/
+	foodEatenX(ComponentX[LenghtSnake - 1],
+				ComponentY1[LenghtSnake - 1],
+				ComponentY2[LenghtSnake - 1]);
+
+	/**If the snake ate then is added a new position**/
+	if(TRUE == FlagFood){
+		/**Decrement the value of X-axis**/
+		ValueX--;
+		/**Reset if the snake reaches the limit**/
+		if(ValueX < LIMIT_LEFT){ValueX = LIMIT_RIGHT;}
+
+		/**Add the new position to grown snake**/
+		ComponentX[LenghtSnake - 1] = ValueX;
+		ComponentY1[LenghtSnake - 1] = lastValueY1;
+		ComponentY2[LenghtSnake - 1] = lastValueY2;
+	}
 	/**Return the left direction**/
 	return (DIRECTION_LEFT);
 }
@@ -351,6 +466,23 @@ Direction_Type moveRight(void){
 	for(counter = 0; counter < LenghtSnake; counter++){
 		LCDNokia_gotoXY(ComponentX[counter],ComponentY1[counter]);
 		LCDNokia_writeByte(LCD_DATA,ComponentY2[counter]);
+	}
+	/**Verifies if the snake found the food**/
+	foodEatenX(ComponentX[LenghtSnake - 1],
+				ComponentY1[LenghtSnake - 1],
+				ComponentY2[LenghtSnake - 1]);
+
+	/**If the snake ate then is added a new position**/
+	if(TRUE == FlagFood){
+		/**Increment the value of X-axis**/
+		ValueX++;
+		/**Reset if the snake reaches the limit**/
+		if(ValueX > LIMIT_RIGHT){ValueX = LIMIT_LEFT;}
+
+		/**Add the new position to grown snake**/
+		ComponentX[LenghtSnake - 1] = ValueX;
+		ComponentY1[LenghtSnake - 1] = lastValueY1;
+		ComponentY2[LenghtSnake - 1] = lastValueY2;
 	}
 	/**Return the right direction**/
 	return (DIRECTION_RIGHT);
@@ -401,14 +533,19 @@ uint8 runSnake(void){
 	/**Lock to execute once the initial position**/
 	static uint8 flagDefault = FALSE;
 
-	/**Create the borders of the game**/
-	edgeGame();
 	/**Draw the initial conditionals and wait 1 second**/
 	if(FALSE == flagDefault){
 		initialConditions();
 		flagDefault = TRUE;
 		delay(INITIAL_TIME);
 	}
+	/**Generate the food until is captured**/
+	if(TRUE == FlagFood){foodGenerator();}
+
+	/**Print the snake food**/
+	LCDNokia_gotoXY(FoodSnake.foodX,FoodSnake.foodY1);
+	LCDNokia_writeByte(LCD_DATA,FoodSnake.foodY2);
+
 	/**Move the snake**/
 	moveSnake();
 

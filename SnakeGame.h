@@ -18,9 +18,10 @@ typedef struct{
 }SnakeInfo_Type;
 
 typedef struct{
-	sint8 foodX;
-	sint8 foodY1;
-	sint8 foodY2;
+	uint8 foodX;
+	uint8 foodY1;
+	uint8 foodY2;
+	uint8 bitY2;
 }Food_Type;
 
 typedef enum{DIRECTION_UP,
@@ -38,6 +39,8 @@ typedef const struct StateMove{
 void edgeGame(void);
 uint8 initialConditions(void);
 uint8 foodGenerator(void);
+void foodEatenX(uint32 axisX, uint32 axisY1, uint32 axisY2);
+void foodEatenY(uint32 axisX, uint32 axisY1);
 Direction_Type moveUp(void);
 Direction_Type moveDown(void);
 Direction_Type moveLeft(void);

@@ -20,11 +20,10 @@ void enableRNGA(void){
 }
 
 void initRNGA(){
-	enableRNGA();
-	while((RNG->SR & RNG_SR_OREG_LVL_MASK) == 0);
-	RandomData = RNG->OR;
+
 }
 
-uint32 getRandomData(void){
+uint32 getRandomData(void){	while((RNG->SR & RNG_SR_OREG_LVL_MASK) == 0);
+RandomData = RNG->OR;
 	return (RandomData);
 }

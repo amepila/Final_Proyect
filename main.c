@@ -123,6 +123,7 @@ int main(void){
     	//mainFunctions = StateProgram[currentState].stateFunction;
     	//currentState = mainFunctions();
     	runSnake();
+
 /*
     	LCDNokia_bitmap(getFrame1());
     	delay(K);
