@@ -10,61 +10,73 @@
 
 #include "DataTypeDefinitions.h"
 
-uint8 printTestFrame(void);
+typedef enum{TESTFRAME,		FRAME1,		FRAME2,		FRAME3,		FRAME4, 	FRAME5, 	FRAME6,		FRAME7,		FRAME8,
+			CHIP,		HORDA,		MUSIC,		PIKACHU,	ANDROID,	SNAKEGAME,	GAMEOVER,	START,		DIEDGAME,
+			ANDROID_MENU,			HORDA_MENU,				MUSIC_MENU,				PIKACHU_MENU,			CHIP_MENU,
+			MESSAGES_MAIN,			CONTACTS_MAIN,			SNAKE_MAIN,				WALLPAPER_MENU,			COMPASS_MAIN
+}Frame_Type;
 
-uint8 printFrame1(void);
+typedef Frame_Type(*fptrStateFrame)(void);
 
-uint8 printFrame2(void);
+typedef const struct StateFrame{
+	Frame_Type(*stateFrame)(void);
+}StateFrame_Type;
 
-uint8 printFrame3(void);
+Frame_Type printTestFrame(void);
 
-uint8 printFrame4(void);
+Frame_Type printFrame1(void);
 
-uint8 printFrame5(void);
+Frame_Type printFrame2(void);
 
-uint8 printFrame6(void);
+Frame_Type printFrame3(void);
 
-uint8 printFrame7(void);
+Frame_Type printFrame4(void);
 
-uint8 printFrame8(void);
+Frame_Type printFrame5(void);
 
-uint8 printChipFrame(void);
+Frame_Type printFrame6(void);
 
-uint8 printHordaFrame(void);
+Frame_Type printFrame7(void);
 
-uint8 printMusicFrame(void);
+Frame_Type printFrame8(void);
 
-uint8 printPikachuFrame(void);
+Frame_Type printChipFrame(void);
 
-uint8 printAndroidFrame(void);
+Frame_Type printHordaFrame(void);
 
-uint8 printSnakeGameFrame(void);
+Frame_Type printMusicFrame(void);
 
-uint8 printGameOVer(void);
+Frame_Type printPikachuFrame(void);
 
-uint8 printStart(void);
+Frame_Type printAndroidFrame(void);
 
-uint8 printDiedGame(void);
+Frame_Type printSnakeGameFrame(void);
 
-uint8 printAndroidMenu(void);
+Frame_Type printGameOVer(void);
 
-uint8 printChipMenu(void);
+Frame_Type printStart(void);
 
-uint8 printPikachuMenu(void);
+Frame_Type printDiedGame(void);
 
-uint8 printMusicMenu(void);
+Frame_Type printAndroidMenu(void);
 
-uint8 printHordaMenu(void);
+Frame_Type printChipMenu(void);
 
-uint8 printMessagesMain(void);
+Frame_Type printPikachuMenu(void);
 
-uint8 printContactsMain(void);
+Frame_Type printMusicMenu(void);
 
-uint8 printSnakeMain(void);
+Frame_Type printHordaMenu(void);
 
-uint8 printCompassMain(void);
+Frame_Type printMessagesMain(void);
 
-uint8 printWallpaperMain(void);
+Frame_Type printContactsMain(void);
+
+Frame_Type printSnakeMain(void);
+
+Frame_Type printCompassMain(void);
+
+Frame_Type printWallpaperMain(void);
 
 uint8 printLoading(void);
 

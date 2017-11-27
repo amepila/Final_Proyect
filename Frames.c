@@ -1000,97 +1000,97 @@ const uint32 Loading[8] = {
 					(uint32)frame8
 };
 
-uint8 printTestFrame(void){
+Frame_Type printTestFrame(void){
 	LCDNokia_bitmap(TEST);
-	return(TRUE);
+	return(TESTFRAME);
 }
 
-uint8 printChipFrame(void){
+Frame_Type printChipFrame(void){
 	LCDNokia_bitmap(chip);
-	return(TRUE);
+	return(CHIP);
 }
 
-uint8 printHordaFrame(void){
+Frame_Type printHordaFrame(void){
 	LCDNokia_bitmap(horda);
-	return(TRUE);
+	return(HORDA);
 }
 
-uint8 printMusicFrame(void){
+Frame_Type printMusicFrame(void){
 	LCDNokia_bitmap(music);
-	return(TRUE);
+	return(MUSIC);
 }
 
-uint8 printPikachuFrame(void){
+Frame_Type printPikachuFrame(void){
 	LCDNokia_bitmap(pikachu);
-	return(TRUE);
+	return(PIKACHU);
 }
 
-uint8 printAndroidFrame(void){
+Frame_Type printAndroidFrame(void){
 	LCDNokia_bitmap(android);
-	return(TRUE);
+	return(ANDROID);
 }
 
-uint8 printSnakeGameFrame(void){
+Frame_Type printSnakeGameFrame(void){
 	LCDNokia_bitmap(snakeGame);
-	return(TRUE);
+	return(SNAKEGAME);
 }
 
-uint8 printGameOVer(void){
+Frame_Type printGameOVer(void){
 	LCDNokia_bitmap(gameOver);
-	return(TRUE);
+	return(GAMEOVER);
 }
 
-uint8 printStart(void){
+Frame_Type printStart(void){
 	LCDNokia_bitmap(start);
-	return(TRUE);
+	return(START);
 }
 
-uint8 printDiedGame(void){
+Frame_Type printDiedGame(void){
 	LCDNokia_bitmap(diedGame);
-	return(TRUE);
+	return(DIEDGAME);
 }
 
-uint8 printAndroidMenu(void){
+Frame_Type printAndroidMenu(void){
 	LCDNokia_bitmap(androidMenu);
-	return(TRUE);
+	return(ANDROID_MENU);
 }
 
-uint8 printChipMenu(void){
+Frame_Type printChipMenu(void){
 	LCDNokia_bitmap(chipMenu);
-	return(TRUE);
+	return(CHIP_MENU);
 }
 
-uint8 printPikachuMenu(void){
+Frame_Type printPikachuMenu(void){
 	LCDNokia_bitmap(pikachuMenu);
-	return(TRUE);
+	return(PIKACHU_MENU);
 }
-uint8 printMusicMenu(void){
+Frame_Type printMusicMenu(void){
 	LCDNokia_bitmap(musicMenu);
-	return(TRUE);
+	return(MUSIC_MENU);
 }
-uint8 printHordaMenu(void){
+Frame_Type printHordaMenu(void){
 	LCDNokia_bitmap(hordaMenu);
-	return(TRUE);
+	return(HORDA_MENU);
 }
 
-uint8 printMessagesMain(void){
+Frame_Type printMessagesMain(void){
 	LCDNokia_bitmap(messagesMain);
-	return(TRUE);
+	return(MESSAGES_MAIN);
 }
 
-uint8 printContactsMain(void){
+Frame_Type printContactsMain(void){
 	LCDNokia_bitmap(contactsMain);
-	return(TRUE);
+	return(CONTACTS_MAIN);
 }
 
-uint8 printSnakeMain(void){
+Frame_Type printSnakeMain(void){
 	LCDNokia_bitmap(snakeMain);
-	return(TRUE);
+	return(SNAKE_MAIN);
 }
 
-uint8 printCompassMain(void){
+Frame_Type printCompassMain(void){
 	LCDNokia_bitmap(compassMain);
-	return(TRUE);
+	return(COMPASS_MAIN);
 }
 
 uint8 printWallpaperMain(void){

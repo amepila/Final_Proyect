@@ -9,11 +9,12 @@
 #include "States.h"
 #include "Phases.h"
 
-const PhasePtrMainMenu_Type phasesMainMenu[3] =
+const PhasePtrMainMenu_Type phasesMainMenu[4] =
 {
 		{initialLoad1},
 		{initialLoad2},
-		{generalView}
+		{generalView},
+		{viewMenu}
 };
 const PhasePtrContacts_Type phasesContacts[5] =
 {

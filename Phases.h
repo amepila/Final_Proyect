@@ -17,6 +17,10 @@
 #include "States.h"
 #include "LCDNokia5110.h"
 
+
+
+
+/************************************************************/
 /**
  * \brief This data type define the data type in MAIN MENU
  */
@@ -98,6 +102,7 @@ void cleanContact(uint8 contact);
 PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data);
 PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data);
 PhaseMainMenu_Type generalView(PhaseMainMenu_Type data);
+PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data);
 
 PhaseContacts_Type contactsMenu(PhaseContacts_Type data);
 PhaseContacts_Type viewContacts(PhaseContacts_Type data);

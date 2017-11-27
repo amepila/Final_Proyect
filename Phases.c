@@ -51,6 +51,25 @@ static uint32 NoContacts;
 static uint32 NoGamers;
 static ModeContact_Type ModeContact = MODE_ADD;
 
+const StateFrame_Type StateWallpaper[5] =
+{
+		{printChipFrame},
+		{printPikachuFrame},
+		{printHordaFrame},
+		{printMusicFrame},
+		{printAndroidFrame}
+};
+
+const StateFrame_Type StateMenus[5] =
+{
+		{printMessagesMain},
+		{printContactsMain},
+		{printSnakeMain},
+		{printCompassMain},
+		{printWallpaperMain}
+};
+
+
 void cleanContact(uint8 contact){
 	uint8 counter;
 	uint32 positionName;
@@ -75,7 +94,7 @@ PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data){
 	static PhaseMainMenu_Type currentMainMenu1;
 
 	printLoading();
-	delay(8000000);
+	//Calibration
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = INITIAL_LOAD2;
@@ -108,7 +127,35 @@ PhaseMainMenu_Type generalView(PhaseMainMenu_Type data){
 	currentMainMenu2.phaseState = data.phaseState;
 	currentMainMenu2.stateMain = data.stateMain;
 
-	//Frame of Menu
+
+
+	/**Detect when a key is pressed*/
+	if(getUART0_flag()){
+		/**Comparison between the pressed keys to continue with next main state**/
+		if(getUART0_mailBox() == ASCII_1){currentMainMenu2.stateMain = CONTACTS;}
+		if(getUART0_mailBox() == ASCII_2){currentMainMenu2.stateMain = MESSAGES;}
+		if(getUART0_mailBox() == ASCII_3){currentMainMenu2.stateMain = SNAKE_GAME;}
+		if(getUART0_mailBox() == ASCII_4){currentMainMenu2.stateMain = COMPASS;}
+		if(getUART0_mailBox() == ASCII_5){currentMainMenu2.stateMain = WALLPAPER;}
+
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	return (currentMainMenu2);
+}
+
+PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseMainMenu_Type currentMainMenu2;
+
+	/**Set with the current state and phase**/
+	currentMainMenu2.phaseState = data.phaseState;
+	currentMainMenu2.stateMain = data.stateMain;
+
 
 	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
@@ -320,7 +367,7 @@ PhaseSnake_Type startGame(PhaseSnake_Type data){
 	static PhaseSnake_Type currentSnake1;
 
 	/**Show the menu of the game**/
-	printSnakeMenuFrame();
+	printSnakeGameFrame();
 
 	currentSnake1.phaseState = START_GAME;
 	currentSnake1.stateMain = SNAKE_GAME;
