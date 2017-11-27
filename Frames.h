@@ -36,9 +36,9 @@ uint8 printMusicFrame(void);
 
 uint8 printPikachuFrame(void);
 
-uint8 printSnakeMenuFrame(void);
+uint8 printAndroidFrame(void);
 
-uint8 printTriforce(void);
+uint8 printSnakeGameFrame(void);
 
 uint8 printGameOVer(void);
 
@@ -46,7 +46,25 @@ uint8 printStart(void);
 
 uint8 printDiedGame(void);
 
-uint8 printMessagesMenu(void);
+uint8 printAndroidMenu(void);
+
+uint8 printChipMenu(void);
+
+uint8 printPikachuMenu(void);
+
+uint8 printMusicMenu(void);
+
+uint8 printHordaMenu(void);
+
+uint8 printMessagesMain(void);
+
+uint8 printContactsMain(void);
+
+uint8 printSnakeMain(void);
+
+uint8 printCompassMain(void);
+
+uint8 printWallpaperMain(void);
 
 uint8 printLoading(void);
 
