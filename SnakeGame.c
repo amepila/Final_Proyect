@@ -20,7 +20,7 @@
 /**ASCII D to move right**/
 #define RIGHT			(68)
 /**Time to launch the new snake**/
-#define TIME			(500000)
+#define TIME			(300000)
 /**Time to wait the initial game**/
 #define INITIAL_TIME	(1000000)
 /**Coordinate of edge up**/
@@ -144,7 +144,6 @@ uint8 initialConditions(void){
 	/**Initial direction**/
 	CurrentDirection = DIRECTION_RIGHT;
 	/**Initial info to game**/
-	InfoSnake.lives = 3;
 	InfoSnake.score = 0;
 
 	/**Create the borders of the game**/
@@ -306,7 +305,10 @@ Direction_Type moveUp(void){
 		ComponentY2[LenghtSnake - 1] = ValueY2;
 	}
 	/**If the snake reaches the limit the game is reseted**/
-	if((MIN_LINES_Y1== ValueY1) && (LIMIT_UPCOUNT == ValueY2)){FlagDefault = TRUE;}
+	if((MIN_LINES_Y1== ValueY1) && (LIMIT_UPCOUNT == CounterBitY)){
+		FlagDefault = TRUE;
+		InfoSnake.lives--;
+	}
 	/**Return the up direction**/
 	return (DIRECTION_UP);
 }
@@ -386,7 +388,11 @@ Direction_Type moveDown(void){
 		ComponentY2[LenghtSnake - 1] = ValueY2;
 	}
 	/**If the snake reaches the limit the game is reseted**/
-	if((MAX_LINES_Y1== ValueY1) && (LIMIT_DOWNCOUNT == ValueY2)){FlagDefault = TRUE;}
+	if((MAX_LINES_Y1== ValueY1) && (LIMIT_DOWNCOUNT == ValueY2)){
+		FlagDefault = TRUE;
+		InfoSnake.lives--;
+
+	}
 	/**Return the down direction**/
 	return (DIRECTION_DOWN);
 }
@@ -451,7 +457,10 @@ Direction_Type moveLeft(void){
 		ComponentY2[LenghtSnake - 1] = lastValueY2;
 	}
 	/**If the snake reaches the limit the game is reseted**/
-	if(LIMIT_LEFT == ValueX){FlagDefault = TRUE;}
+	if(LIMIT_LEFT == ValueX){
+		FlagDefault = TRUE;
+		InfoSnake.lives--;
+	}
 	/**Return the left direction**/
 	return (DIRECTION_LEFT);
 }
@@ -516,7 +525,10 @@ Direction_Type moveRight(void){
 		ComponentY2[LenghtSnake - 1] = lastValueY2;
 	}
 	/**If the snake reaches the limit the game is reseted**/
-	if(LIMIT_RIGHT == ValueX){FlagDefault = TRUE;}
+	if(LIMIT_RIGHT == ValueX){
+		FlagDefault = TRUE;
+		InfoSnake.lives--;
+	}
 	/**Return the right direction**/
 	return (DIRECTION_RIGHT);
 }
@@ -563,6 +575,17 @@ uint8 moveSnake(void){
 
 SnakeInfo_Type runSnake(void){
 
+	/**Flag to renew the lives in the game**/
+	static uint8 flagLives = TRUE;
+
+	/**If there isn't lives then activate the flag of lives**/
+	if(InfoSnake.lives == 0){flagLives = TRUE;}
+
+	/**Renew the lives in the game**/
+	if(TRUE == flagLives){
+		InfoSnake.lives = 3;
+		flagLives = FALSE;
+	}
 	/**Draw the initial conditionals and wait 1 second**/
 	if(TRUE == FlagDefault){
 		initialConditions();

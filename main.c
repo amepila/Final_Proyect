@@ -120,8 +120,9 @@ int main(void){
 
     while(1){
     	/**Machine states based on tags**/
-    	mainFunctions = StateProgram[currentState].stateFunction;
-    	currentState = mainFunctions();
+    	//mainFunctions = StateProgram[currentState].stateFunction;
+    	//currentState = mainFunctions();
+    	printMessagesMain();
     }
     return 0;
 }
