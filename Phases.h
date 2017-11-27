@@ -26,7 +26,8 @@
  */
 typedef enum{INITIAL_LOAD1,
 			INITIAL_LOAD2,
-			GENERAL_VIEW
+			GENERAL_VIEW,
+			VIEW_MENU
 }PhaseStateMenu_Type;
 
 typedef struct{

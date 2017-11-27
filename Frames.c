@@ -1000,95 +1000,95 @@ const uint32 Loading[8] = {
 					(uint32)frame8
 };
 
-Frame_Type printTestFrame(void){
+uint8 printTestFrame(void){
 	LCDNokia_bitmap(TEST);
-	return(TESTFRAME);
+	return(TRUE);
 }
 
-Frame_Type printChipFrame(void){
+Images_Type printChipFrame(void){
 	LCDNokia_bitmap(chip);
 	return(CHIP);
 }
 
-Frame_Type printHordaFrame(void){
+Images_Type printHordaFrame(void){
 	LCDNokia_bitmap(horda);
 	return(HORDA);
 }
 
-Frame_Type printMusicFrame(void){
+Images_Type printMusicFrame(void){
 	LCDNokia_bitmap(music);
 	return(MUSIC);
 }
 
-Frame_Type printPikachuFrame(void){
+Images_Type printPikachuFrame(void){
 	LCDNokia_bitmap(pikachu);
 	return(PIKACHU);
 }
 
-Frame_Type printAndroidFrame(void){
+Images_Type printAndroidFrame(void){
 	LCDNokia_bitmap(android);
 	return(ANDROID);
 }
 
-Frame_Type printSnakeGameFrame(void){
+uint8 printSnakeGameFrame(void){
 	LCDNokia_bitmap(snakeGame);
-	return(SNAKEGAME);
+	return(TRUE);
 }
 
-Frame_Type printGameOVer(void){
+uint8 printGameOVer(void){
 	LCDNokia_bitmap(gameOver);
-	return(GAMEOVER);
+	return(TRUE);
 }
 
-Frame_Type printStart(void){
+uint8 printStart(void){
 	LCDNokia_bitmap(start);
-	return(START);
+	return(TRUE);
 }
 
-Frame_Type printDiedGame(void){
+uint8 printDiedGame(void){
 	LCDNokia_bitmap(diedGame);
-	return(DIEDGAME);
+	return(TRUE);
 }
 
-Frame_Type printAndroidMenu(void){
+Wall_Type printAndroidMenu(void){
 	LCDNokia_bitmap(androidMenu);
 	return(ANDROID_MENU);
 }
 
-Frame_Type printChipMenu(void){
+Wall_Type printChipMenu(void){
 	LCDNokia_bitmap(chipMenu);
 	return(CHIP_MENU);
 }
 
-Frame_Type printPikachuMenu(void){
+Wall_Type printPikachuMenu(void){
 	LCDNokia_bitmap(pikachuMenu);
 	return(PIKACHU_MENU);
 }
-Frame_Type printMusicMenu(void){
+Wall_Type printMusicMenu(void){
 	LCDNokia_bitmap(musicMenu);
 	return(MUSIC_MENU);
 }
-Frame_Type printHordaMenu(void){
+Wall_Type printHordaMenu(void){
 	LCDNokia_bitmap(hordaMenu);
 	return(HORDA_MENU);
 }
 
-Frame_Type printMessagesMain(void){
+WallMenu_Type printMessagesMain(void){
 	LCDNokia_bitmap(messagesMain);
 	return(MESSAGES_MAIN);
 }
 
-Frame_Type printContactsMain(void){
+WallMenu_Type printContactsMain(void){
 	LCDNokia_bitmap(contactsMain);
 	return(CONTACTS_MAIN);
 }
 
-Frame_Type printSnakeMain(void){
+WallMenu_Type printSnakeMain(void){
 	LCDNokia_bitmap(snakeMain);
 	return(SNAKE_MAIN);
 }
 
-Frame_Type printCompassMain(void){
+WallMenu_Type printCompassMain(void){
 	LCDNokia_bitmap(compassMain);
 	return(COMPASS_MAIN);
 }

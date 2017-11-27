@@ -50,17 +50,20 @@ static uint32 CurrentAddress_Number;
 static uint32 NoContacts;
 static uint32 NoGamers;
 static ModeContact_Type ModeContact = MODE_ADD;
+static Wall_Type CurrentWallpaper = ANDROID_MENU;
+static uint8 FlagChange_Wallpaper = TRUE;
+static uint8 FlagChange_Menu = TRUE;
 
-const StateFrame_Type StateWallpaper[5] =
+const StateWall_Type StateWallpaper[5] =
 {
-		{printChipFrame},
-		{printPikachuFrame},
-		{printHordaFrame},
-		{printMusicFrame},
-		{printAndroidFrame}
+		{printChipMenu},
+		{printHordaMenu},
+		{printMusicMenu},
+		{printPikachuMenu},
+		{printAndroidMenu}
 };
 
-const StateFrame_Type StateMenus[5] =
+const StateWallMenu_Type StateMenus[5] =
 {
 		{printMessagesMain},
 		{printContactsMain},
@@ -127,16 +130,17 @@ PhaseMainMenu_Type generalView(PhaseMainMenu_Type data){
 	currentMainMenu2.phaseState = data.phaseState;
 	currentMainMenu2.stateMain = data.stateMain;
 
-
-
+	if(TRUE == FlagChange_Wallpaper){
+		Wall_Type(*wallpaper)(void);
+		wallpaper = StateWallpaper[CurrentWallpaper].stateWall;
+		wallpaper();
+		FlagChange_Wallpaper = FALSE;
+	}
 	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
 		/**Comparison between the pressed keys to continue with next main state**/
-		if(getUART0_mailBox() == ASCII_1){currentMainMenu2.stateMain = CONTACTS;}
-		if(getUART0_mailBox() == ASCII_2){currentMainMenu2.stateMain = MESSAGES;}
-		if(getUART0_mailBox() == ASCII_3){currentMainMenu2.stateMain = SNAKE_GAME;}
-		if(getUART0_mailBox() == ASCII_4){currentMainMenu2.stateMain = COMPASS;}
-		if(getUART0_mailBox() == ASCII_5){currentMainMenu2.stateMain = WALLPAPER;}
+		if(getUART0_mailBox() == ASCII_M){currentMainMenu2.phaseState = VIEW_MENU;}
+		if(getUART0_mailBox() == ASCII_m){currentMainMenu2.phaseState = VIEW_MENU;}
 
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
@@ -151,26 +155,48 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 
 	/**Create the variable with current data**/
 	static PhaseMainMenu_Type currentMainMenu2;
+	static WallMenu_Type currentMenu = MESSAGES_MAIN;
+	static sint8 counterMenu = 1;
 
 	/**Set with the current state and phase**/
 	currentMainMenu2.phaseState = data.phaseState;
 	currentMainMenu2.stateMain = data.stateMain;
 
-
+	if(TRUE == FlagChange_Menu){
+		WallMenu_Type(*menus)(void);
+		menus = StateMenus[currentMenu].stateWallMenu;
+		currentMenu = menus();
+		FlagChange_Menu = FALSE;
+	}
 	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
 		/**Comparison between the pressed keys to continue with next main state**/
-		if(getUART0_mailBox() == ASCII_1){currentMainMenu2.stateMain = CONTACTS;}
-		if(getUART0_mailBox() == ASCII_2){currentMainMenu2.stateMain = MESSAGES;}
-		if(getUART0_mailBox() == ASCII_3){currentMainMenu2.stateMain = SNAKE_GAME;}
-		if(getUART0_mailBox() == ASCII_4){currentMainMenu2.stateMain = COMPASS;}
-		if(getUART0_mailBox() == ASCII_5){currentMainMenu2.stateMain = WALLPAPER;}
-
+		if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
+			FlagChange_Menu = TRUE;
+			counterMenu++;
+			if(counterMenu > 5){counterMenu = 1;}
+		}
+		if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
+			if(counterMenu == 0){counterMenu = 5;}
+			else{counterMenu--;}
+			if(counterMenu )
+			FlagChange_Menu = TRUE;
+		}
+		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
+			currentMainMenu2.phaseState = GENERAL_VIEW;
+			FlagChange_Wallpaper = TRUE;
+		}
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
 	/**Clear the mailbox**/
 	clearUART0_mailbox();
+
+	if(counterMenu == 1){currentMenu = MESSAGES_MAIN;}
+	if(counterMenu == 2){currentMenu = CONTACTS_MAIN;}
+	if(counterMenu == 3){currentMenu = SNAKE_MAIN;}
+	if(counterMenu == 4){currentMenu = COMPASS_MAIN;}
+	if(counterMenu == 5){currentMenu = WALLPAPER_MAIN;}
 
 	return (currentMainMenu2);
 }
@@ -396,8 +422,6 @@ PhaseSnake_Type runGame(PhaseSnake_Type data){
 
 	currentSnake2.phaseState = RUN_GAME;
 	currentSnake2.stateMain = SNAKE_GAME;
-
-	//Snake game
 
 	if(getUART0_flag()){
 		if(getUART0_mailBox() == ASCII_ESC){
