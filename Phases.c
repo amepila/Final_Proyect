@@ -186,6 +186,15 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 			currentMainMenu2.phaseState = GENERAL_VIEW;
 			FlagChange_Wallpaper = TRUE;
 		}
+		if((getUART0_mailBox() == ASCII_S) || (getUART0_mailBox() == ASCII_s)){
+			if(currentMenu == MESSAGES_MAIN){currentMainMenu2.stateMain = MESSAGES;}
+			if(currentMenu == CONTACTS_MAIN){currentMainMenu2.stateMain = CONTACTS;}
+			if(currentMenu == SNAKE_MAIN){currentMainMenu2.stateMain = SNAKE_GAME;}
+			if(currentMenu == COMPASS_MAIN){currentMainMenu2.stateMain = COMPASS;}
+			if(currentMenu == WALLPAPER_MAIN){currentMainMenu2.stateMain = WALLPAPER;}
+
+			counterMenu = 1;
+		}
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
