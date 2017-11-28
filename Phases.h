@@ -77,9 +77,9 @@ typedef const struct PhaseContacts{
 
 typedef enum{START_GAME,
 			RUN_GAME,
-			SAVE_SCORE,
-			SAVE_ROM,
-			VIEW_SCORE,
+			GAME_LOST,
+			SHOW_SCORE,
+			PLAY_AGAIN,
 			EXIT_GAME
 }PhaseStateSnake_Type;
 
@@ -113,6 +113,10 @@ PhaseContacts_Type saveContacts(PhaseContacts_Type data);
 
 PhaseSnake_Type startGame(PhaseSnake_Type data);
 PhaseSnake_Type runGame(PhaseSnake_Type data);
+PhaseSnake_Type gameLost(PhaseSnake_Type data);
+PhaseSnake_Type showScore(PhaseSnake_Type data);
+PhaseSnake_Type playAgain(PhaseSnake_Type data);
 PhaseSnake_Type exitGame(PhaseSnake_Type data);
+
 
 #endif /* PHASES_H_ */

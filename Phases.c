@@ -45,6 +45,7 @@ typedef enum{
 }ASCII_Code;
 
 typedef enum{ASCII_CR = 13, ASCII_ESC = 27}ASCII_Special;
+const uint8 MsgScore[] = "Your score is: ";
 static uint32 CurrentAddress_Name;
 static uint32 CurrentAddress_Number;
 static uint32 NoContacts;
@@ -53,6 +54,8 @@ static ModeContact_Type ModeContact = MODE_ADD;
 static Wall_Type CurrentWallpaper = ANDROID_MENU;
 static uint8 FlagChange_Wallpaper = TRUE;
 static uint8 FlagChange_Menu = TRUE;
+static uint8 FlagSnakeInit = TRUE;
+static uint8 FlagGameOver = TRUE;
 
 const StateWall_Type StateWallpaper[5] =
 {
@@ -127,7 +130,7 @@ PhaseMainMenu_Type generalView(PhaseMainMenu_Type data){
 	static PhaseMainMenu_Type currentMainMenu2;
 
 	/**Set with the current state and phase**/
-	currentMainMenu2.phaseState = data.phaseState;
+	currentMainMenu2.phaseState = GENERAL_VIEW;
 	currentMainMenu2.stateMain = data.stateMain;
 
 	if(TRUE == FlagChange_Wallpaper){
@@ -139,8 +142,14 @@ PhaseMainMenu_Type generalView(PhaseMainMenu_Type data){
 	/**Detect when a key is pressed*/
 	if(getUART0_flag()){
 		/**Comparison between the pressed keys to continue with next main state**/
-		if(getUART0_mailBox() == ASCII_M){currentMainMenu2.phaseState = VIEW_MENU;}
-		if(getUART0_mailBox() == ASCII_m){currentMainMenu2.phaseState = VIEW_MENU;}
+		if(getUART0_mailBox() == ASCII_M){
+			currentMainMenu2.phaseState = VIEW_MENU;
+			FlagChange_Menu = TRUE;
+		}
+		if(getUART0_mailBox() == ASCII_m){
+			currentMainMenu2.phaseState = VIEW_MENU;
+			FlagChange_Menu = TRUE;
+		}
 
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
@@ -189,7 +198,10 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 		if((getUART0_mailBox() == ASCII_S) || (getUART0_mailBox() == ASCII_s)){
 			if(currentMenu == MESSAGES_MAIN){currentMainMenu2.stateMain = MESSAGES;}
 			if(currentMenu == CONTACTS_MAIN){currentMainMenu2.stateMain = CONTACTS;}
-			if(currentMenu == SNAKE_MAIN){currentMainMenu2.stateMain = SNAKE_GAME;}
+			if(currentMenu == SNAKE_MAIN){
+				currentMainMenu2.stateMain = SNAKE_GAME;
+				FlagSnakeInit = TRUE;
+			}
 			if(currentMenu == COMPASS_MAIN){currentMainMenu2.stateMain = COMPASS;}
 			if(currentMenu == WALLPAPER_MAIN){currentMainMenu2.stateMain = WALLPAPER;}
 
@@ -401,11 +413,15 @@ PhaseSnake_Type startGame(PhaseSnake_Type data){
 	/**Create the variable with current data**/
 	static PhaseSnake_Type currentSnake1;
 
-	/**Show the menu of the game**/
-	printSnakeGameFrame();
-
 	currentSnake1.phaseState = START_GAME;
 	currentSnake1.stateMain = SNAKE_GAME;
+
+	/**Show the menu of the game**/
+	if(TRUE == FlagSnakeInit){
+		printSnakeGameFrame();
+		FlagSnakeInit = FALSE;
+	}
+
 	/**Press any key to continue**/
 	if(getUART0_flag()){
 		if(getUART0_mailBox() == ASCII_SPACE){
@@ -413,6 +429,7 @@ PhaseSnake_Type startGame(PhaseSnake_Type data){
 		}
 		if(getUART0_mailBox() == ASCII_ESC){
 			currentSnake1.stateMain = GENERAL_VIEW;
+			FlagChange_Wallpaper = TRUE;
 		}
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
@@ -426,18 +443,18 @@ PhaseSnake_Type runGame(PhaseSnake_Type data){
 
 	/**Create the variable with current data**/
 	static PhaseSnake_Type currentSnake2;
-	static uint8 score = 0;
-	static uint8 lives;
+	static SnakeInfo_Type infoGame;
 
 	currentSnake2.phaseState = RUN_GAME;
 	currentSnake2.stateMain = SNAKE_GAME;
 
+	infoGame = runSnake();
+
 	if(getUART0_flag()){
 		if(getUART0_mailBox() == ASCII_ESC){
-			currentSnake2.score = score;
 			currentSnake2.phaseState = 	EXIT_GAME;
-			score = 0;
-			lives = 0;
+			infoGame.lives = 0;
+			infoGame.score = 0;
 		}
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
@@ -445,14 +462,73 @@ PhaseSnake_Type runGame(PhaseSnake_Type data){
 	/**Clear the mailbox**/
 	clearUART0_mailbox();
 
-	if(0 == lives){
-		currentSnake2.score = score;
-		currentSnake2.phaseState = 	EXIT_GAME;
-		score = 0;
+	if(infoGame.lives == 0){
+		currentSnake2.lives = infoGame.lives;
+		currentSnake2.score = infoGame.score;
+		currentSnake2.phaseState = GAME_LOST;
+		FlagGameOver = TRUE;
+
 	}
 	return (currentSnake2);
 }
+PhaseSnake_Type gameLost(PhaseSnake_Type data){
 
+	static PhaseSnake_Type currentSnake3;
+
+	currentSnake3.phaseState = GAME_LOST;
+	currentSnake3.stateMain = SNAKE_GAME;
+	currentSnake3.lives = data.lives;
+	currentSnake3.score = data.score;
+
+	if(TRUE == FlagGameOver){
+		printGameOVer();
+		FlagGameOver = FALSE;
+	}
+
+	if(getUART0_flag()){
+		currentSnake3.phaseState = SHOW_SCORE;
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	return (currentSnake3);
+}
+PhaseSnake_Type showScore(PhaseSnake_Type data){
+
+	static PhaseSnake_Type currentSnake4;
+	static uint8 flagClear = TRUE;
+
+	currentSnake4.phaseState = SHOW_SCORE;
+	currentSnake4.stateMain = SNAKE_GAME;
+	currentSnake4.lives = data.lives;
+	currentSnake4.score = data.score;
+
+	if(TRUE == flagClear){
+		LCDNokia_clear();
+		LCDNokia_gotoXY(25,3);
+		LCDNokia_sendString((uint8*)MsgScore);
+		LCDNokia_gotoXY(32,4);
+		LCDNokia_printValue(currentSnake4.score);
+		flagClear = FALSE;
+	}
+	if(getUART0_flag()){
+		currentSnake4.phaseState = PLAY_AGAIN;
+		flagClear = TRUE;
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	return (currentSnake4);
+
+}
+PhaseSnake_Type playAgain(PhaseSnake_Type data){
+
+
+}
 PhaseSnake_Type exitGame(PhaseSnake_Type data){
 
 	/**Create the variable with current data**/

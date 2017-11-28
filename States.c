@@ -24,10 +24,13 @@ const PhasePtrContacts_Type phasesContacts[5] =
 		{editContacts},
 		{saveContacts}
 };
-const PhasePtrSnake_Type phasesSnake[3] =
+const PhasePtrSnake_Type phasesSnake[6] =
 {
 		{startGame},
 		{runGame},
+		{gameLost},
+		{showScore},
+		{playAgain},
 		{exitGame}
 };
 
