@@ -29,11 +29,23 @@
  * \brief This enum define the UART port to be used.
  */
 typedef enum {I2C_0, I2C_1, I2C_2}I2C_ChannelType;
+typedef enum {NONE,WRITE_DATA,WRITECONTROL,READCONTROL,WRITE_REGADD,READ_DUMMY,READ_DATA,NACK}I2C_trm_stage;
+typedef enum {READ,WRITE}I2C_mode;
+typedef enum {FLAG_NONE,FLAG_TRANSMISSION}I2C_transFlag;
+typedef enum {NO_FAULT,BUS_BUSY,TIMEOUT,PERMANENT_BUS_FAULT}I2C_fault;
 
 typedef struct{
+	I2C_trm_stage trm_stage;
+	I2C_transFlag transFlag;
+	I2C_mode	  mode;
+	I2C_fault	  fault;
+	uint8		  controlcodeW;
+	uint8		  controlcodeR;
+	uint8		  regadd;
+	uint8		  data_size;
+	uint8		  data_index;
 
-}Time_Config;
-
+}NBstruct;
 
 /********************************************************************************************/
  /********************************************************************************************/
@@ -170,5 +182,11 @@ void I2C_start(void);
 
  */
 void I2C_stop(void);
+void writeI2CDevice2(uint8 slaveAddressW,uint16 add,uint8 data);
+void writeI2CDevice(uint8 slaveAddressW,uint8 add,uint8 data);
+uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add);
+uint8 readI2CDevice2(uint8 slaveAddressW,uint8 slaveAddressR,uint16 add);
+void I2Cdelay(uint32 delay);
 
+void I2Cdelay(uint32 delay);
 #endif /* I2C_H_ */

@@ -72,7 +72,7 @@ typedef const struct PhaseContacts{
 /***********************************************************/
 
 /**
- * \brief This data type define the data type in CONTACTS
+ * \brief This data type define the data type in SNAKE GAME
  */
 
 typedef enum{START_GAME,
@@ -97,6 +97,25 @@ typedef const struct PhaseSnake{
 	PhaseSnake_Type(*PhaseSnake)(PhaseSnake_Type);
 }PhasePtrSnake_Type;
 /***********************************************************/
+/***********************************************************/
+/**
+ * \brief This data type define the data type in COMPASS
+ */
+
+typedef enum{SHOW_COMPASS,
+			EXIT_COMPASS
+}PhaseStateCompass_Type;
+
+typedef struct{
+	PhaseStateCompass_Type phaseState;
+	States_MenuType stateMain;
+}PhaseCompass_Type;
+
+typedef PhaseCompass_Type(*fptrPhaseCompass)(PhaseCompass_Type);
+
+typedef const struct PhaseCompass{
+	PhaseCompass_Type(*PhaseCompass)(PhaseCompass_Type);
+}PhasePtrCompass_Type;
 
 void cleanContact(uint8 contact);
 
@@ -117,6 +136,9 @@ PhaseSnake_Type gameLost(PhaseSnake_Type data);
 PhaseSnake_Type showScore(PhaseSnake_Type data);
 PhaseSnake_Type playAgain(PhaseSnake_Type data);
 PhaseSnake_Type exitGame(PhaseSnake_Type data);
+
+PhaseCompass_Type showCompass(PhaseCompass_Type data);
+PhaseCompass_Type exitCompass(PhaseCompass_Type data);
 
 
 #endif /* PHASES_H_ */

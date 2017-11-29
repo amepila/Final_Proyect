@@ -11,6 +11,7 @@
  */
 #include "MK64F12.h"
 #include "GPIO.h"
+#include "Magnetometer.h"
 
 static GPIO_interruptFlags_t GPIO_intrStatusFlag;
 
@@ -32,10 +33,26 @@ void PORTC_IRQHandler()
 {
 	GPIO_readInterrupt(GPIO_C);
 
-	//GPIO_intrStatusFlag.flagPortC  = TRUE;
+	if((1<<BIT2) == GPIO_readInterrupt(GPIO_C)){
+		GPIO_intrStatusFlag.flagPortC  = TRUE;
+	}
+	if((1<<BIT3) == GPIO_readInterrupt(GPIO_C)){
+		GPIO_intrStatusFlag.flagPortC  = TRUE;
+
+	}
+	if((1<<BIT6)==GPIO_readInterrupt(GPIO_C)){
+		GPIO_intrStatusFlag.flagPortC = TRUE;
+		setDataReady(); //magnetometer Function for data ready interrupt
+	}
+	if((1<<BIT13)==GPIO_readInterrupt(GPIO_C)){
+			GPIO_intrStatusFlag.flagPortC = TRUE;
+			setDataReady(); //magnetometer Function for data ready interrupt
+		}
+	GPIO_intrStatusFlag.flagPortC  = TRUE;
+
+
 	GPIO_clearInterrupt(GPIO_C);
 }
-
 uint8 GPIO_getIRQStatus(GPIO_portNameType gpio)
 {
 	switch (gpio) {

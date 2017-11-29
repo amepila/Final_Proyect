@@ -114,11 +114,15 @@ void UART0_init(UART_ChannelType uartChannel, uint32 systemClk, UART_BaudRateTyp
 
 
 	/**Enables the clock of PortB in order to configures TX and RX of UART peripheral*/
+	//SIM->SCGC5 = SIM_SCGC5_PORTA_MASK;
 	SIM->SCGC5 = SIM_SCGC5_PORTB_MASK;
 	/**Configures the pin control register of pin16 in PortB as UART RX*/
 	PORTB->PCR[16] = PORT_PCR_MUX(3);
+	//PORTA->PCR[1] = PORT_PCR_MUX(2);
+
 	/**Configures the pin control register of pin17 in PortB as UART TX*/
 	PORTB->PCR[17] = PORT_PCR_MUX(3);
+	//PORTA->PCR[2] = PORT_PCR_MUX(2);
 
 	/*Isolate the baudRate variable
 	 * 115200 = 21000000/((SBR+BRFD)*16)

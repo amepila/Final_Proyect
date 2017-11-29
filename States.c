@@ -33,6 +33,11 @@ const PhasePtrSnake_Type phasesSnake[6] =
 		{playAgain},
 		{exitGame}
 };
+const PhasePtrCompass_Type phasesCompass[2] =
+{
+		{showCompass},
+		{exitCompass}
+};
 
 States_MenuType stateMainMenu(void){
 
@@ -74,11 +79,11 @@ States_MenuType stateSnakeGame(void){
 
 	static PhaseStateSnake_Type phase = START_GAME;
 	static PhaseSnake_Type phaseSnake;
-	PhaseSnake_Type(*contactsSnake)(PhaseSnake_Type);
+	PhaseSnake_Type(*snakeFunctions)(PhaseSnake_Type);
 	phaseSnake.stateMain = SNAKE_GAME;
 
-	contactsSnake = phasesSnake[phase].PhaseSnake;
-	phaseSnake = contactsSnake(phaseSnake);
+	snakeFunctions = phasesSnake[phase].PhaseSnake;
+	phaseSnake = snakeFunctions(phaseSnake);
 
 	phase = phaseSnake.phaseState;
 	return (phaseSnake.stateMain);
@@ -86,10 +91,16 @@ States_MenuType stateSnakeGame(void){
 
 States_MenuType stateCompass(void){
 
-	States_MenuType MainState = COMPASS;
+	static PhaseStateCompass_Type phase = SHOW_COMPASS;
+	static PhaseCompass_Type phaseCompass;
+	PhaseCompass_Type(*compassFunctions)(PhaseCompass_Type);
+	phaseCompass.stateMain = COMPASS;
 
+	compassFunctions = phasesCompass[phase].PhaseCompass;
+	phaseCompass = compassFunctions(phaseCompass);
 
-	return (MainState);
+	phase = phaseCompass.phaseState;
+	return (phaseCompass.stateMain);
 }
 
 States_MenuType stateWallpaper(void){

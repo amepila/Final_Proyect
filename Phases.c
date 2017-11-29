@@ -10,6 +10,8 @@
 #include "I2CE2PROM.h"
 #include "SnakeGame.h"
 #include "Frames.h"
+#include "Magnetometer.h"
+#include "DirectionPicture.h"
 
 #define POSITION_NAME		(0U)
 #define POSITION_NUMBER 	(2000U)
@@ -99,8 +101,8 @@ PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data){
 	/**Create the variable with current data**/
 	static PhaseMainMenu_Type currentMainMenu1;
 
-	printLoading();
-	//Calibration
+	//printLoading();
+	magCalibration();
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = INITIAL_LOAD2;
@@ -560,4 +562,36 @@ PhaseSnake_Type exitGame(PhaseSnake_Type data){
 	currentSnake6.stateMain = MAIN_MENU;
 
 	return (currentSnake6);
+}
+
+PhaseCompass_Type showCompass(PhaseCompass_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseCompass_Type currentCompass1;
+
+	currentCompass1.phaseState = SHOW_COMPASS;
+	currentCompass1.stateMain = COMPASS;
+
+	startCompass();
+
+	if(getUART0_flag()){
+		if(getUART0_mailBox() == ASCII_ESC){
+			currentCompass1.phaseState = EXIT_COMPASS;
+		}
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	return(currentCompass1);
+}
+PhaseCompass_Type exitCompass(PhaseCompass_Type data){
+
+	/**Create the variable with current data**/
+	static PhaseCompass_Type currentCompass2;
+
+	currentCompass2.stateMain = MAIN_MENU;
+
+	return(currentCompass2);
 }
