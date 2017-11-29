@@ -38,6 +38,11 @@ const PhasePtrCompass_Type phasesCompass[2] =
 		{showCompass},
 		{exitCompass}
 };
+const PhasePtrWallpaper_Type phasesWallpaper[2] =
+{
+		{viewWallpaper},
+		{exitWallpaper}
+};
 
 States_MenuType stateMainMenu(void){
 
@@ -105,8 +110,14 @@ States_MenuType stateCompass(void){
 
 States_MenuType stateWallpaper(void){
 
-	States_MenuType MainState = WALLPAPER;
+	static PhaseStateWallpaper_Type phase = VIEW_WALLPAPER;
+	static PhaseWallpaper_Type phaseWallpaper;
+	PhaseWallpaper_Type(*wallpaperFunctions)(PhaseWallpaper_Type);
+	phaseWallpaper.stateMain = WALLPAPER;
 
+	wallpaperFunctions = phasesWallpaper[phase].PhaseWallpaper;
+	phaseWallpaper = wallpaperFunctions(phaseWallpaper);
 
-	return (MainState);
+	phase = phaseWallpaper.phaseState;
+	return (phaseWallpaper.stateMain);
 }

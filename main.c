@@ -92,7 +92,7 @@ int main(void){
 	NVIC_enableInterruptAndPriotity(PIT_CH0_IRQ,PRIORITY_9);
 
 	/**Configures UART 0 to transmit/receive at 115200 bauds with a 60 MHz of clock core*/
-	UART0_init(UART_0, 60000000, BD_115200);
+	UART0_init(UART_0, 60000000, BD_9600);
 	/**Configures UART 1 to transmit/receive at 9600 bauds in GSM module with a 60 MHz of clock core*/
 	UART1_init(UART_1, 60000000, BD_9600);
 	/**Enables the UART interrupts*/

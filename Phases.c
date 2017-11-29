@@ -77,6 +77,15 @@ const StateWallMenu_Type StateMenus[5] =
 		{printWallpaperMain}
 };
 
+const StateImages_Type StateImages[5] =
+{
+		{printChipFrame},
+		{printHordaFrame},
+		{printMusicFrame},
+		{printPikachuFrame},
+		{printAndroidFrame}
+};
+
 
 void cleanContact(uint8 contact){
 	uint8 counter;
@@ -116,8 +125,8 @@ PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data){
 	/**Create the variable with current data**/
 	static PhaseMainMenu_Type currentMainMenu1;
 
-	NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
-	NoGamers = Convert_wordASCIItoDATA(readMemory(POSITION_GAMERS));
+	//NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
+	//NoGamers = Convert_wordASCIItoDATA(readMemory(POSITION_GAMERS));
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = GENERAL_VIEW;
@@ -189,7 +198,6 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 		if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
 			if(counterMenu == 0){counterMenu = 5;}
 			else{counterMenu--;}
-			if(counterMenu )
 			flagChange_Menu = TRUE;
 		}
 		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
@@ -202,7 +210,6 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 			if(currentMenu == CONTACTS_MAIN){currentMainMenu2.stateMain = CONTACTS;}
 			if(currentMenu == SNAKE_MAIN){
 				currentMainMenu2.stateMain = SNAKE_GAME;
-				flagChange_Menu = TRUE;
 				FlagSnakeInit = TRUE;
 			}
 			if(currentMenu == COMPASS_MAIN){currentMainMenu2.stateMain = COMPASS;}
@@ -568,9 +575,15 @@ PhaseCompass_Type showCompass(PhaseCompass_Type data){
 
 	/**Create the variable with current data**/
 	static PhaseCompass_Type currentCompass1;
+	static uint8 flagContrast = TRUE;
 
 	currentCompass1.phaseState = SHOW_COMPASS;
 	currentCompass1.stateMain = COMPASS;
+
+	if(TRUE == flagContrast){
+		//LCDNokia_writeByte(LCD_CMD, 0xB1);
+		flagContrast = FALSE;
+	}
 
 	startCompass();
 
@@ -590,8 +603,72 @@ PhaseCompass_Type exitCompass(PhaseCompass_Type data){
 
 	/**Create the variable with current data**/
 	static PhaseCompass_Type currentCompass2;
-
+	LCDNokia_writeByte(LCD_CMD, 0xBB);
+	LCDNokia_clear();
 	currentCompass2.stateMain = MAIN_MENU;
 
 	return(currentCompass2);
+}
+
+PhaseWallpaper_Type viewWallpaper(PhaseWallpaper_Type data){
+
+	static PhaseWallpaper_Type currentWallpaper1;
+	static sint8 counterMenu = 1;
+	static uint8 flagChange_Wall = TRUE;
+	static Images_Type currentImage = CHIP;
+
+	currentWallpaper1.phaseState = VIEW_WALLPAPER;
+	currentWallpaper1.stateMain = WALLPAPER;
+
+	if(TRUE == flagChange_Wall){
+		Images_Type(*images)(void);
+		images = StateImages[currentImage].stateImages;
+		currentImage = images();
+		flagChange_Wall= FALSE;
+	}
+
+	if(getUART0_flag()){
+		if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
+			flagChange_Wall = TRUE;
+			counterMenu++;
+			if(counterMenu > 5){counterMenu = 1;}
+		}
+		if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
+			if(counterMenu == 0){counterMenu = 5;}
+			else{counterMenu--;}
+			flagChange_Wall = TRUE;
+		}
+		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
+			flagChange_Wall = TRUE;
+			currentWallpaper1.phaseState = EXIT_WALLPAPER;
+			counterMenu = 1;
+		}
+		if((getUART0_mailBox() == ASCII_S) || (getUART0_mailBox() == ASCII_s)){
+			counterMenu--;
+			CurrentWallpaper = (Wall_Type)counterMenu;
+			flagChange_Wall = TRUE;
+			currentWallpaper1.phaseState = EXIT_WALLPAPER;
+			counterMenu = 1;
+		}
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	clearUART0_mailbox();
+
+	if(counterMenu == 1){currentImage = CHIP;}
+	if(counterMenu == 2){currentImage = HORDA;}
+	if(counterMenu == 3){currentImage = MUSIC;}
+	if(counterMenu == 4){currentImage = PIKACHU;}
+	if(counterMenu == 5){currentImage = ANDROID;}
+
+	return(currentWallpaper1);
+}
+PhaseWallpaper_Type exitWallpaper(PhaseWallpaper_Type data){
+
+	static PhaseWallpaper_Type currentWallpaper2;
+
+	currentWallpaper2.stateMain = MAIN_MENU;
+	FlagChange_Wallpaper = TRUE;
+
+	return(currentWallpaper2);
 }

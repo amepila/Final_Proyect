@@ -116,6 +116,27 @@ typedef PhaseCompass_Type(*fptrPhaseCompass)(PhaseCompass_Type);
 typedef const struct PhaseCompass{
 	PhaseCompass_Type(*PhaseCompass)(PhaseCompass_Type);
 }PhasePtrCompass_Type;
+/***********************************************************/
+/***********************************************************/
+/**
+ * \brief This data type define the data type in WALLPAPER
+ */
+
+typedef enum{VIEW_WALLPAPER,
+			EXIT_WALLPAPER
+}PhaseStateWallpaper_Type;
+
+typedef struct{
+	PhaseStateWallpaper_Type phaseState;
+	States_MenuType stateMain;
+}PhaseWallpaper_Type;
+
+typedef PhaseWallpaper_Type(*fptrPhaseWallpaper)(PhaseWallpaper_Type);
+
+typedef const struct PhaseWallpaper{
+	PhaseWallpaper_Type(*PhaseWallpaper)(PhaseWallpaper_Type);
+}PhasePtrWallpaper_Type;
+/**********************************************************/
 
 void cleanContact(uint8 contact);
 
@@ -139,6 +160,9 @@ PhaseSnake_Type exitGame(PhaseSnake_Type data);
 
 PhaseCompass_Type showCompass(PhaseCompass_Type data);
 PhaseCompass_Type exitCompass(PhaseCompass_Type data);
+
+PhaseWallpaper_Type viewWallpaper(PhaseWallpaper_Type data);
+PhaseWallpaper_Type exitWallpaper(PhaseWallpaper_Type data);
 
 
 #endif /* PHASES_H_ */

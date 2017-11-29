@@ -234,7 +234,7 @@ void magCalibration(){
 	rawdatamag magCalib;
 	int i=0;
 	dataReady=0;
-	while(i<120){
+	while(i<35){
 	//AQUI SE PUEDE METER CAMBIO DE FRAME EN BASE A i/////////////////7
 	////////////////////////////////////////////////////////////
 	if(1==dataReady){
