@@ -16,6 +16,13 @@ const PhasePtrMainMenu_Type phasesMainMenu[4] =
 		{generalView},
 		{viewMenu}
 };
+const PhasePtrMessages_Type phasesMessages[4] =
+{
+		{writeName},
+		{writeMessages},
+		{sendMessages},
+		{exitMessages}
+};
 const PhasePtrContacts_Type phasesContacts[5] =
 {
 		{contactsMenu},
@@ -74,10 +81,16 @@ States_MenuType stateContacts(void){
 
 States_MenuType stateMessages(void){
 
-	States_MenuType MainState = MESSAGES;
+	static PhaseStateMessages_Type phase = WRITE_NAME;
+	static PhaseMessages_Type phaseMessages;
+	PhaseMessages_Type(*messagesFunctions)(PhaseMessages_Type);
+	phaseMessages.stateMain = MESSAGES;
 
+	messagesFunctions = phasesMessages[phase].PhaseMessages;
+	phaseMessages = messagesFunctions(phaseMessages);
 
-	return (MainState);
+	phase = phaseMessages.phaseState;
+	return (phaseMessages.stateMain);
 }
 
 States_MenuType stateSnakeGame(void){

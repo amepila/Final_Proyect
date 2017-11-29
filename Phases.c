@@ -53,7 +53,6 @@ const uint8 MsgConfirm[] = "Yes / No";
 static uint32 CurrentAddress_Name;
 static uint32 CurrentAddress_Number;
 static uint32 NoContacts;
-static uint32 NoGamers;
 static ModeContact_Type ModeContact = MODE_ADD;
 static Wall_Type CurrentWallpaper = ANDROID_MENU;
 static uint8 FlagChange_Wallpaper = TRUE;
@@ -231,6 +230,50 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 	if(counterMenu == 5){currentMenu = WALLPAPER_MAIN;}
 
 	return (currentMainMenu2);
+}
+
+PhaseMessages_Type writeName(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages1;
+
+	currentMessages1.phaseState = WRITE_NAME;
+	currentMessages1.stateMain = MESSAGES;
+
+	if(getUART0_flag()){
+
+	}
+
+	return(currentMessages1);
+
+}
+PhaseMessages_Type writeMessages(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages2;
+
+	currentMessages2.phaseState = WRITE_MESSAGES;
+	currentMessages2.stateMain = MESSAGES;
+
+	if(getUART0_flag()){
+
+	}
+
+	return(currentMessages2);
+}
+PhaseMessages_Type sendMessages(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages3;
+
+	currentMessages3.phaseState = SEND_MESSAGES;
+	currentMessages3.stateMain = MESSAGES;
+
+	return(currentMessages3);
+}
+PhaseMessages_Type exitMessages(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages4;
+
+
+	return(currentMessages4);
 }
 
 PhaseContacts_Type contactsMenu(PhaseContacts_Type data){

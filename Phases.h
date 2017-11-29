@@ -41,6 +41,29 @@ typedef const struct PhaseMainMenu{
 	PhaseMainMenu_Type(*PhaseMainMenu)(PhaseMainMenu_Type);
 }PhasePtrMainMenu_Type;
 /***********************************************************/
+/***********************************************************/
+/**
+ * \brief This data type define the data type in MESSAGES
+ */
+
+typedef enum{WRITE_NAME,
+			WRITE_MESSAGES,
+			SEND_MESSAGES,
+			EXIT_MESSAGES
+}PhaseStateMessages_Type;
+
+typedef struct{
+	PhaseStateMessages_Type phaseState;
+	States_MenuType stateMain;
+}PhaseMessages_Type;
+
+typedef PhaseMessages_Type(*fptrPhaseMessages)(PhaseMessages_Type);
+
+typedef const struct PhaseMessages{
+	PhaseMessages_Type(*PhaseMessages)(PhaseMessages_Type);
+}PhasePtrMessages_Type;
+/**********************************************************/
+/***********************************************************/
 /**
  * \brief This data type define the data type in CONTACTS
  */
@@ -144,6 +167,11 @@ PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data);
 PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data);
 PhaseMainMenu_Type generalView(PhaseMainMenu_Type data);
 PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data);
+
+PhaseMessages_Type writeName(PhaseMessages_Type data);
+PhaseMessages_Type writeMessages(PhaseMessages_Type data);
+PhaseMessages_Type sendMessages(PhaseMessages_Type data);
+PhaseMessages_Type exitMessages(PhaseMessages_Type data);
 
 PhaseContacts_Type contactsMenu(PhaseContacts_Type data);
 PhaseContacts_Type viewContacts(PhaseContacts_Type data);
