@@ -144,7 +144,7 @@ uint8 initialConditions(void){
 	/**Initial direction**/
 	CurrentDirection = DIRECTION_RIGHT;
 	/**Initial info to game**/
-	InfoSnake.score = 0;
+	//InfoSnake.score = 0;
 
 	/**Create the borders of the game**/
 	//edgeGame();
@@ -162,6 +162,10 @@ uint8 initialConditions(void){
 	}
 	/**Success in this function**/
 	return (TRUE);
+}
+uint8 clearScore(void){
+	InfoSnake.score = 0;
+	return(TRUE);
 }
 
 uint8 foodGenerator(void){

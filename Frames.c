@@ -1036,6 +1036,7 @@ uint8 printSnakeGameFrame(void){
 }
 
 uint8 printGameOVer(void){
+	delay(T);
 	LCDNokia_bitmap(gameOver);
 	return(TRUE);
 }

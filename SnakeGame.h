@@ -37,6 +37,7 @@ typedef const struct StateMove{
 }StateMove_Type;
 
 void edgeGame(void);
+uint8 clearScore(void);
 uint8 initialConditions(void);
 uint8 foodGenerator(void);
 void foodEatenX(uint32 axisX, uint32 axisY1, uint32 axisY2);
