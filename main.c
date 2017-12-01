@@ -19,7 +19,6 @@
 #include "Magnetometer.h"
 
 /**Macros to Clock Frequency**/
-
 #define CLK_FREQ_HZ 50000000  /* CLKIN0 frequency */
 #define SLOW_IRC_FREQ 32768	/*This is the approximate value for the slow irc*/
 #define FAST_IRC_FREQ 4000000 /*This is the approximate value for the fast irc*/
@@ -36,7 +35,6 @@
 #define PLL0_VDIV 31    /* PLL multiplier value*/
 
 #define PLL_DIRECT_INIT
-
 
 /**Settings of SPI**/
 const SPI_ConfigType SPI_Config={

@@ -50,6 +50,10 @@ typedef enum{ASCII_CR = 13, ASCII_ESC = 27}ASCII_Special;
 const uint8 MsgScore[] = "Your score is: ";
 const uint8 MsgPlay[] = "Play again?";
 const uint8 MsgConfirm[] = "Yes / No";
+const uint8 NameField[] = "Name: ";
+const uint8 NumberField[] = "Number: ";
+const uint8 SaveNewContact[] = "Save";
+const uint8 CancelEdit[] = "Cancel";
 static uint32 CurrentAddress_Name;
 static uint32 CurrentAddress_Number;
 static uint32 NoContacts;
@@ -125,7 +129,6 @@ PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data){
 	static PhaseMainMenu_Type currentMainMenu1;
 
 	//NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
-	//NoGamers = Convert_wordASCIItoDATA(readMemory(POSITION_GAMERS));
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = GENERAL_VIEW;
@@ -235,27 +238,66 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 PhaseMessages_Type writeName(PhaseMessages_Type data){
 
 	static PhaseMessages_Type currentMessages1;
+	static uint8 counterChar = 0;
+	static uint8 flagLock = TRUE;
 
 	currentMessages1.phaseState = WRITE_NAME;
 	currentMessages1.stateMain = MESSAGES;
 
-	if(getUART0_flag()){
-
+	if(TRUE == flagLock){
+		LCDNokia_gotoXY(1,1);
+		LCDNokia_sendString((uint8*)NameField);
+		LCDNokia_gotoXY(2,1);
+		flagLock = FALSE;
 	}
 
-	return(currentMessages1);
+	if(getUART0_flag()){
+		if(counterChar < 15){
+			if(getUART0_mailBox() == ASCII_CR){
+				currentMessages1.phaseState = WRITE_MESSAGES;
+				counterChar = 0;
+				flagLock = TRUE;
+			}
+			if(getUART0_mailBox() != ASCII_CR){
+				pushFIFO_1(getUART0_mailBox());
+				LCDNokia_sendChar(getUART0_mailBox());
+			}
+			if(getUART0_mailBox() == ASCII_ESC){
+				currentMessages1.stateMain = MAIN_MENU;
+				counterChar = 0;
+				flagLock = TRUE;
+			}
+			counterChar++;
+		}
+		if(counterChar >= 15){
+			currentMessages1.phaseState = WRITE_MESSAGES;
+			counterChar = 0;
+			flagLock = TRUE;
+		}
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
 
+	return(currentMessages1);
 }
 PhaseMessages_Type writeMessages(PhaseMessages_Type data){
 
 	static PhaseMessages_Type currentMessages2;
+	static uint8 counterChar = 0;
 
 	currentMessages2.phaseState = WRITE_MESSAGES;
 	currentMessages2.stateMain = MESSAGES;
 
 	if(getUART0_flag()){
-
+		pushFIFO_1(getUART0_mailBox());
+		counterChar++;
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
 	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
 
 	return(currentMessages2);
 }

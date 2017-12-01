@@ -17,9 +17,6 @@
 #include "States.h"
 #include "LCDNokia5110.h"
 
-
-
-
 /************************************************************/
 /**
  * \brief This data type define the data type in MAIN MENU
@@ -160,6 +157,7 @@ typedef const struct PhaseWallpaper{
 	PhaseWallpaper_Type(*PhaseWallpaper)(PhaseWallpaper_Type);
 }PhasePtrWallpaper_Type;
 /**********************************************************/
+/***********************************************************/
 
 void cleanContact(uint8 contact);
 
