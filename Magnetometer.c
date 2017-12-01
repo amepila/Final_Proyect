@@ -221,6 +221,7 @@ void burstReadAccMag(rawdataacc *acc,rawdatamag *mag){
 	mag->zm=((uint16)(buffer[10]<<8)|(buffer[11]));
 	}
 }
+
 void magCalibration(){
 	sint16 Xmcalmax;
 	sint16 Ymcalmax;
@@ -232,11 +233,20 @@ void magCalibration(){
 	sint16 YmAv;
 	sint16 ZmAv;
 	rawdatamag magCalib;
-	int i=0;
+	uint8 i=0;
+	uint8 j=0;
+	uint8 k=0;
 	dataReady=0;
-	while(i<35){
-	//AQUI SE PUEDE METER CAMBIO DE FRAME EN BASE A i/////////////////7
-	////////////////////////////////////////////////////////////
+	while(i<120){
+		j++;
+		if(j==15){
+			k++;
+			j=0;
+		}
+		if(k>7){
+			k=0;
+		}
+		printLoading(k);
 	if(1==dataReady){
 		burstReadMag(&magCalib);
 		if(i==0){
@@ -296,6 +306,7 @@ void magCalibration(){
 
 
 }
+
 void readSysConfig(){
 	//General Accelerometer  and Magnetometer reset.
 	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL2);

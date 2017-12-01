@@ -175,10 +175,20 @@ typedef ShowContact_Type(*fptrStateShowContact)(void);
 
 typedef const struct StateShowContact{
 	ShowContact_Type(*stateShowContact)(void);
-}ShowContact_Type;
+}StateShowContact_Type;
 /*********************************************************/
 
 void cleanContact(uint8 contact);
+ShowContact_Type contactNumber1(void);
+ShowContact_Type contactNumber2(void);
+ShowContact_Type contactNumber3(void);
+ShowContact_Type contactNumber4(void);
+ShowContact_Type contactNumber5(void);
+ShowContact_Type contactNumber6(void);
+ShowContact_Type contactNumber7(void);
+ShowContact_Type contactNumber8(void);
+ShowContact_Type contactNumber9(void);
+ShowContact_Type contactNumber10(void);
 
 PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data);
 PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data);

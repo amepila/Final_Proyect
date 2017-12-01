@@ -108,9 +108,6 @@ WallMenu_Type printCompassMain(void);
 
 WallMenu_Type printWallpaperMain(void);
 
-uint8 printLoading(void);
-
-uint8 printLoading2(void);
-
+uint8 printLoading(uint8 counter);
 
 #endif /* FRAMES_H_ */

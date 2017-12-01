@@ -1099,13 +1099,7 @@ uint8 printWallpaperMain(void){
 	return(TRUE);
 }
 
-uint8 printLoading(void){
-
-	uint8 counter;
-
-	for(counter = 0; counter < 8; counter++){
+uint8 printLoading(uint8 counter){
 		LCDNokia_bitmap(Loading[counter]);
-		delay(T);
-	}
 	return (TRUE);
 }
