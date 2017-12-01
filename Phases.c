@@ -62,6 +62,8 @@ const uint8 MessageField[] = "Message: ";
 const uint8 SaveNewContact[] = "Save";
 const uint8 CancelEdit[] = "Cancel";
 const uint8 EmptyContacts[] = "(Empty)";
+const uint8 SelectBotton[] = "SEL";
+const uint8 BackButton[] = "BACK";
 static uint32 CurrentAddress_Name;
 static uint32 CurrentAddress_Number;
 static uint32 NoContacts;
@@ -99,6 +101,322 @@ const StateImages_Type StateImages[5] =
 		{printAndroidFrame}
 };
 
+const ShowContact_Type StateShowContacts[10] =
+{
+		{contactNumber1},
+		{contactNumber2},
+		{contactNumber3},
+		{contactNumber4},
+		{contactNumber5},
+		{contactNumber6},
+		{contactNumber7},
+		{contactNumber8},
+		{contactNumber9},
+		{contactNumber10}
+};
+
+ShowContact_Type contactNumber1(void){
+
+	uint8 counterChar;
+	uint8 watchChar;
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory(POSITION_NAME + counterChar));
+		watchChar = readMemory(POSITION_NAME + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory(POSITION_NUMBER + counterChar));
+		watchChar = readMemory(POSITION_NUMBER + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber2(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + NEXT_POSITION) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + NEXT_POSITION) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + NEXT_POSITION) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + NEXT_POSITION) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber3(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (2*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (2*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (2*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (2*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber4(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (3*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (3*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (3*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (3*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber5(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (4*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (4*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (4*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (4*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber6(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (5*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (5*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (5*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (5*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber7(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (6*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (6*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (6*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (6*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber8(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (7*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (7*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (7*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (7*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber9(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (8*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (8*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (8*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (8*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
+
+ShowContact_Type contactNumber10(void){
+
+	LCDNokia_gotoXY(1,0);
+	LCDNokia_sendString((uint8*)NameField);
+	LCDNokia_gotoXY(1,1);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (9*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (9*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,2);
+	LCDNokia_sendString((uint8*)NumberField);
+	LCDNokia_gotoXY(1,3);
+
+	for(counterChar = 0; watchChar != '0'; counterChar++){
+		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (9*NEXT_POSITION)) + counterChar));
+		watchChar = readMemory((POSITION_NUMBER + (9*NEXT_POSITION)) + counterChar);
+		E2PROMdelay(65000);
+	}
+
+	LCDNokia_gotoXY(1,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+	LCDNokia_gotoXY(50,5);
+	LCDNokia_sendString((uint8*)SelectBotton);
+
+	return (CONTACT1);
+}
 
 void cleanContact(uint8 contact){
 	uint8 counter;
@@ -482,18 +800,15 @@ PhaseContacts_Type viewContacts(PhaseContacts_Type data){
 		LCDNokia_sendString((uint8*)EmptyContacts);
 	}
 	if(NoContact > 0){
-		if(flagChangeContact){
-
+		if(TRUE == flagChangeContact){
+			ShowContact_Type(*showCont)(void);
+			showCont = StateShowContacts[currentFriend].stateShowContact;
+			currentFriend = showCont();
 			flagChangeContact = FALSE;
 		}
 	}
-
 	if(getUART0_flag()){
 		if(NoContacts != 0){
-
-			if(getUART0_mailBox() == ASCII_E){currentContacts2.phaseState = EDIT_CONTACTS;}
-			if(getUART0_mailBox() == ASCII_e){currentContacts2.phaseState = EDIT_CONTACTS;}
-
 			if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
 				flagChange_Contact = TRUE;
 				counterMenu++;
@@ -506,7 +821,8 @@ PhaseContacts_Type viewContacts(PhaseContacts_Type data){
 			}
 			if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
 				flagChange_Contact = TRUE;
-				currentContacts2.phaseState = CONTACTS_MENU;
+				counterMenu = 1;
+				currentContacts2.phaseState = CONTACT_MENU;
 			}
 			if((getUART0_mailBox() == ASCII_E) || (getUART0_mailBox() == ASCII_e)){
 				if(counterMenu == 1){currentContacts2.noContact = 1;}
@@ -519,12 +835,22 @@ PhaseContacts_Type viewContacts(PhaseContacts_Type data){
 				if(counterMenu == 8){currentContacts2.noContact = 8;}
 				if(counterMenu == 9){currentContacts2.noContact = 9;}
 				if(counterMenu == 10){currentContacts2.noContact = 10;}
+				currentContacts2.phaseState = EDIT_CONTACTS;
 				LCDNokia_clear();
 				flagChange_Contact = TRUE;
 				counterMenu = 1;
+			}
 		}
-		if(getUART0_mailBox() == ASCII_B){currentContacts2.phaseState = CONTACT_MENU;}
-		if(getUART0_mailBox() == ASCII_b){currentContacts2.phaseState = CONTACT_MENU;}
+		if(getUART0_mailBox() == ASCII_B){
+			flagChange_Contact = TRUE;
+			counterMenu = 1;
+			currentContacts2.phaseState = CONTACT_MENU;
+		}
+		if(getUART0_mailBox() == ASCII_b){
+			flagChange_Contact = TRUE;
+			counterMenu = 1;
+			currentContacts2.phaseState = CONTACT_MENU;
+		}
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
 	}
@@ -604,27 +930,10 @@ PhaseContacts_Type editContacts(PhaseContacts_Type data){
 	currentContacts4.phaseState = data.phaseState;
 	currentContacts4.stateMain = data.stateMain;
 
-	//Frame to show the contact list and button to edit it
+	cleanContact(data.noContact);
 
-	if(getUART0_flag()){
-		if(getUART0_mailBox() == ASCII_0){cleanContact(1); currentContacts4.noContact = 1;}
-		if(getUART0_mailBox() == ASCII_1){cleanContact(2); currentContacts4.noContact = 2;}
-		if(getUART0_mailBox() == ASCII_2){cleanContact(3); currentContacts4.noContact = 3;}
-		if(getUART0_mailBox() == ASCII_3){cleanContact(4); currentContacts4.noContact = 4;}
-		if(getUART0_mailBox() == ASCII_4){cleanContact(5); currentContacts4.noContact = 5;}
-		if(getUART0_mailBox() == ASCII_5){cleanContact(6); currentContacts4.noContact = 6;}
-		if(getUART0_mailBox() == ASCII_6){cleanContact(7); currentContacts4.noContact = 7;}
-		if(getUART0_mailBox() == ASCII_7){cleanContact(8); currentContacts4.noContact = 8;}
-		if(getUART0_mailBox() == ASCII_8){cleanContact(9); currentContacts4.noContact = 9;}
-		if(getUART0_mailBox() == ASCII_9){cleanContact(10); currentContacts4.noContact = 10;}
-
-		ModeContact = MODE_EDIT;
-		currentContacts4.phaseState = ADD_CONTACTS;
-		/**clear the reception flag*/
-		setUART0_flag(FALSE);
-	}
-	/**Clear the mailbox**/
-	clearUART0_mailbox();
+	ModeContact = MODE_EDIT;
+	currentContacts4.phaseState = ADD_CONTACTS;
 
 	return (currentContacts4);
 }
