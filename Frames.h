@@ -52,7 +52,6 @@ typedef const struct StateWallMenu{
 }StateWallMenu_Type;
 /*************************************************************************************************/
 
-
 uint8 printTestFrame(void);
 
 uint8 printFrame1(void);

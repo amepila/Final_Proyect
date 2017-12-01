@@ -16,8 +16,10 @@ const PhasePtrMainMenu_Type phasesMainMenu[4] =
 		{generalView},
 		{viewMenu}
 };
-const PhasePtrMessages_Type phasesMessages[4] =
+const PhasePtrMessages_Type phasesMessages[6] =
 {
+		{messagesMenu},
+		{mailBoxMSG},
 		{writeName},
 		{writeMessages},
 		{sendMessages},
@@ -81,7 +83,7 @@ States_MenuType stateContacts(void){
 
 States_MenuType stateMessages(void){
 
-	static PhaseStateMessages_Type phase = WRITE_NAME;
+	static PhaseStateMessages_Type phase = MESSAGES_MENU;
 	static PhaseMessages_Type phaseMessages;
 	PhaseMessages_Type(*messagesFunctions)(PhaseMessages_Type);
 	phaseMessages.stateMain = MESSAGES;

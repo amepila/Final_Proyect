@@ -600,3 +600,15 @@ FIFO_FlagType clearFIFO_1(void){
 	return (FIFO_UART1.stateFIFO);
 }
 
+void clearFIFO(FIFO_Type fifo){
+
+	uint32 counter;
+
+	/*Clear the FIFO*/
+	for(counter = 0; counter < 50; counter++){
+		fifo.data[counter] = '\0';
+	}
+	fifo.size = 0;
+	fifo.stateFIFO = EMPTY;
+}
+

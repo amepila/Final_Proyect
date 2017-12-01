@@ -43,7 +43,9 @@ typedef const struct PhaseMainMenu{
  * \brief This data type define the data type in MESSAGES
  */
 
-typedef enum{WRITE_NAME,
+typedef enum{MESSAGES_MENU,
+			MAILBOX_MSG,
+			WRITE_NAME,
 			WRITE_MESSAGES,
 			SEND_MESSAGES,
 			EXIT_MESSAGES
@@ -166,6 +168,8 @@ PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data);
 PhaseMainMenu_Type generalView(PhaseMainMenu_Type data);
 PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data);
 
+PhaseMessages_Type messagesMenu(PhaseMessages_Type data);
+PhaseMessages_Type mailBoxMSG(PhaseMessages_Type data);
 PhaseMessages_Type writeName(PhaseMessages_Type data);
 PhaseMessages_Type writeMessages(PhaseMessages_Type data);
 PhaseMessages_Type sendMessages(PhaseMessages_Type data);

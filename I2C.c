@@ -145,23 +145,18 @@ void writeI2CDevice2(uint8 slaveAddress,uint16 add,uint8 data){
 	I2C_write_Byte(slaveAddress); //Device the I2C wants to write to.
 	I2C_wait();
 	//I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_write_Byte(Hadd); //Write High address to access	I2C_get_ACK();
 	I2C_wait();
 	//I2C_get_ACK();
-	I2Cdelay(500);
-
 
 	I2C_write_Byte(Ladd); //Write Low address to access	I2C_get_ACK();
 	I2C_wait();
 	//I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_write_Byte(data);
 	I2C_wait();
 	//I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_stop(); //Stop transfer
 
@@ -189,30 +184,25 @@ uint8 readI2CDevice2(uint8 slaveAddresW,uint8 slaveAddressR,uint16 add){
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(WRITECONTROL); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
-	I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_write_Byte(Hadd); //Write first most significant 8 bits
 	I2C_wait();
-	I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_repeated_Start();
 
 	I2C_write_Byte(READCONTROL); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
-	I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
 	I2C_NACK();
 
 	dummy=I2C_read_Byte();
 	I2C_wait();
-	I2Cdelay(500);
 
 	I2C_stop();// Generating stop signal
 	dummy=I2C_read_Byte();
+	I2Cdelay(500);
+
 	return dummy;
 }
 uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add){
@@ -221,27 +211,20 @@ uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add){
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(slaveAddressW); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
-	I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_write_Byte(add); //Write first most significant 8 bits
 	I2C_wait();
-	I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_repeated_Start();
 
 	I2C_write_Byte(slaveAddressR); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
-	I2C_get_ACK();
-	I2Cdelay(500);
 
 	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
 	I2C_NACK();
 
 	dummy=I2C_read_Byte();
 	I2C_wait();
-	I2Cdelay(500);
 
 	I2C_stop();// Generating stop signal
 	dummy=I2C_read_Byte();

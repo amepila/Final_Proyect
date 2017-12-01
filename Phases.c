@@ -46,12 +46,16 @@ typedef enum{
 		ASCII_z,			ASCII_BRACEOPEN,	ASCII_VERT,			ASCII_BRACECLOSE,	ASCII_TILDE
 }ASCII_Code;
 
+const uint8 ASCII_Alphabet[26] = {
+		'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+};
 typedef enum{ASCII_CR = 13, ASCII_ESC = 27}ASCII_Special;
 const uint8 MsgScore[] = "Your score is: ";
 const uint8 MsgPlay[] = "Play again?";
 const uint8 MsgConfirm[] = "Yes / No";
 const uint8 NameField[] = "Name: ";
 const uint8 NumberField[] = "Number: ";
+const uint8 MessageField[] = "Message: ";
 const uint8 SaveNewContact[] = "Save";
 const uint8 CancelEdit[] = "Cancel";
 static uint32 CurrentAddress_Name;
@@ -61,6 +65,8 @@ static ModeContact_Type ModeContact = MODE_ADD;
 static Wall_Type CurrentWallpaper = ANDROID_MENU;
 static uint8 FlagChange_Wallpaper = TRUE;
 static uint8 FlagSnakeInit = TRUE;
+static FIFO_Type Name;
+static FIFO_Type Message;
 
 const StateWall_Type StateWallpaper[5] =
 {
@@ -128,7 +134,7 @@ PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data){
 	/**Create the variable with current data**/
 	static PhaseMainMenu_Type currentMainMenu1;
 
-	//NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
+	NoContacts = Convert_wordASCIItoDATA(readMemory(POSITION_CONTACTS));
 
 	/**Set with the current state and phase**/
 	currentMainMenu1.phaseState = GENERAL_VIEW;
@@ -234,88 +240,171 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 
 	return (currentMainMenu2);
 }
+PhaseMessages_Type messagesMenu(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages1;
+	static sint8 counterMenu = 1;
+	static uint8 flagChange_Menu = TRUE;
+
+	currentMessages1.phaseState = MESSAGES_MENU;
+	currentMessages1.stateMain = MESSAGES;
+
+	if(TRUE == flagChange_Menu){
+		if(counterMenu == 1){printDiedGame();}
+		if(counterMenu == 2){printTestFrame();}
+		flagChange_Menu = FALSE;
+	}
+	/**Detect when a key is pressed*/
+	if(getUART0_flag()){
+		/**Comparison between the pressed keys to continue with next main state**/
+		if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
+			flagChange_Menu = TRUE;
+			counterMenu++;
+			if(counterMenu > 2){counterMenu = 1;}
+		}
+		if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
+			if(counterMenu == 0){counterMenu = 1;}
+			else{counterMenu--;}
+			flagChange_Menu = TRUE;
+		}
+		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
+			flagChange_Menu = TRUE;
+			currentMessages1.stateMain = MAIN_MENU;
+		}
+		if((getUART0_mailBox() == ASCII_S) || (getUART0_mailBox() == ASCII_s)){
+			if(counterMenu == 1){currentMessages1.phaseState = WRITE_NAME;}
+			if(counterMenu == 2){currentMessages1.phaseState = MAILBOX_MSG;}
+			LCDNokia_clear();
+			flagChange_Menu = TRUE;
+			counterMenu = 1;
+		}
+		/**clear the reception flag*/
+		setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
+
+	return (currentMessages1);
+}
+PhaseMessages_Type mailBoxMSG(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages2;
+
+	return (currentMessages2);
+}
 
 PhaseMessages_Type writeName(PhaseMessages_Type data){
 
-	static PhaseMessages_Type currentMessages1;
+	static PhaseMessages_Type currentMessages3;
+	static uint8 counter;
 	static uint8 counterChar = 0;
 	static uint8 flagLock = TRUE;
 
-	currentMessages1.phaseState = WRITE_NAME;
-	currentMessages1.stateMain = MESSAGES;
+	currentMessages3.phaseState = WRITE_NAME;
+	currentMessages3.stateMain = MESSAGES;
 
 	if(TRUE == flagLock){
-		LCDNokia_gotoXY(1,1);
+		LCDNokia_gotoXY(1,0);
 		LCDNokia_sendString((uint8*)NameField);
-		LCDNokia_gotoXY(2,1);
+		LCDNokia_gotoXY(1,1);
 		flagLock = FALSE;
 	}
 
 	if(getUART0_flag()){
-		if(counterChar < 15){
-			if(getUART0_mailBox() == ASCII_CR){
-				currentMessages1.phaseState = WRITE_MESSAGES;
-				counterChar = 0;
-				flagLock = TRUE;
-			}
-			if(getUART0_mailBox() != ASCII_CR){
+		for(counter = 0; counter < 25; counter++){
+			if(ASCII_Alphabet[counter] == getUART0_mailBox()){
 				pushFIFO_1(getUART0_mailBox());
 				LCDNokia_sendChar(getUART0_mailBox());
 			}
-			if(getUART0_mailBox() == ASCII_ESC){
-				currentMessages1.stateMain = MAIN_MENU;
-				counterChar = 0;
-				flagLock = TRUE;
-			}
-			counterChar++;
 		}
-		if(counterChar >= 15){
-			currentMessages1.phaseState = WRITE_MESSAGES;
+		if(getUART0_mailBox() == ASCII_CR){
+			Name = popFIFO_1();
+			currentMessages3.phaseState = WRITE_MESSAGES;
+			counterChar = 0;
+			clearFIFO_1();
+			flagLock = TRUE;
+		}
+		if(getUART0_mailBox() == ASCII_ESC){
+			clearFIFO(Name);
+			clearFIFO_1();
+			currentMessages3.stateMain = MAIN_MENU;
 			counterChar = 0;
 			flagLock = TRUE;
 		}
-		/**clear the reception flag*/
-		setUART0_flag(FALSE);
-	}
-	/**Clear the mailbox**/
-	clearUART0_mailbox();
-
-	return(currentMessages1);
-}
-PhaseMessages_Type writeMessages(PhaseMessages_Type data){
-
-	static PhaseMessages_Type currentMessages2;
-	static uint8 counterChar = 0;
-
-	currentMessages2.phaseState = WRITE_MESSAGES;
-	currentMessages2.stateMain = MESSAGES;
-
-	if(getUART0_flag()){
-		pushFIFO_1(getUART0_mailBox());
 		counterChar++;
-		/**clear the reception flag*/
-		setUART0_flag(FALSE);
+	/**clear the reception flag*/
+	setUART0_flag(FALSE);
 	}
 	/**Clear the mailbox**/
 	clearUART0_mailbox();
-
-	return(currentMessages2);
-}
-PhaseMessages_Type sendMessages(PhaseMessages_Type data){
-
-	static PhaseMessages_Type currentMessages3;
-
-	currentMessages3.phaseState = SEND_MESSAGES;
-	currentMessages3.stateMain = MESSAGES;
 
 	return(currentMessages3);
 }
-PhaseMessages_Type exitMessages(PhaseMessages_Type data){
+PhaseMessages_Type writeMessages(PhaseMessages_Type data){
 
 	static PhaseMessages_Type currentMessages4;
+	static uint8 counter;
+	static uint8 counterChar = 0;
+	static uint8 flagLock = TRUE;
 
+	currentMessages4.phaseState = WRITE_MESSAGES;
+	currentMessages4.stateMain = MESSAGES;
+
+	if(TRUE == flagLock){
+		//LCDNokia_clear();
+		LCDNokia_gotoXY(1,2);
+		LCDNokia_sendString((uint8*)MessageField);
+		LCDNokia_gotoXY(1,3);
+		flagLock = FALSE;
+	}
+
+	if(getUART0_flag()){
+		for(counter = 0; counter < 25; counter++){
+			if(ASCII_Alphabet[counter] == getUART0_mailBox()){
+				pushFIFO_1(getUART0_mailBox());
+				LCDNokia_sendChar(getUART0_mailBox());
+			}
+		}
+		if(getUART0_mailBox() == ASCII_CR){
+			Message = popFIFO_1();
+			currentMessages4.phaseState = SEND_MESSAGES;
+			counterChar = 0;
+			clearFIFO_1();
+			flagLock = TRUE;
+		}
+		if(getUART0_mailBox() == ASCII_ESC){
+			clearFIFO(Name);
+			clearFIFO(Message);
+			clearFIFO_1();
+			currentMessages4.stateMain = MAIN_MENU;
+			counterChar = 0;
+			flagLock = TRUE;
+		}
+		counterChar++;
+
+	/**clear the reception flag*/
+	setUART0_flag(FALSE);
+	}
+	/**Clear the mailbox**/
+	clearUART0_mailbox();
 
 	return(currentMessages4);
+}
+PhaseMessages_Type sendMessages(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages5;
+
+	currentMessages5.phaseState = SEND_MESSAGES;
+	currentMessages5.stateMain = MESSAGES;
+
+	return(currentMessages5);
+}
+PhaseMessages_Type exitMessages(PhaseMessages_Type data){
+
+	static PhaseMessages_Type currentMessages6;
+
+
+	return(currentMessages6);
 }
 
 PhaseContacts_Type contactsMenu(PhaseContacts_Type data){

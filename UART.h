@@ -321,5 +321,9 @@ FIFO_FlagType clearFIFO_0(void);
  */
 FIFO_FlagType clearFIFO_1(void);
 
+
+void clearFIFO(FIFO_Type fifo);
+
+
 #endif /* UART_H_ */
 
