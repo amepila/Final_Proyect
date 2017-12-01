@@ -159,7 +159,24 @@ typedef const struct PhaseWallpaper{
 	PhaseWallpaper_Type(*PhaseWallpaper)(PhaseWallpaper_Type);
 }PhasePtrWallpaper_Type;
 /**********************************************************/
-/***********************************************************/
+typedef enum{CONTACT1,
+			CONTACT2,
+			CONTACT3,
+			CONTACT4,
+			CONTACT5,
+			CONTACT6,
+			CONTACT7,
+			CONTACT8,
+			CONTACT9,
+			CONTACT10
+}ShowContact_Type;
+
+typedef ShowContact_Type(*fptrStateShowContact)(void);
+
+typedef const struct StateShowContact{
+	ShowContact_Type(*stateShowContact)(void);
+}ShowContact_Type;
+/*********************************************************/
 
 void cleanContact(uint8 contact);
 

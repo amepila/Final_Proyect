@@ -15,6 +15,9 @@ UART_MailBoxType UART1_MailBox;
 FIFO_Type FIFO_UART0;
 FIFO_Type FIFO_UART1;
 
+static uint8 FlagClearFIFO_0 = TRUE;
+static uint8 FlagClearFIFO_1 = TRUE;
+
 /*Table of BRFD. Range 0:31 */
 const float BRFD_Type[32] = {
 		(0),	(0.03125),	(0.0625),	(0.09375),	(0.125),	(0.15625),	(0.1875),	(0.21875),
@@ -478,6 +481,11 @@ FIFO_Type popFIFO_0(void){
 	static uint32 counterChar;
 	FIFO_Type fifo;
 
+	if(TRUE == FlagClearFIFO_0){
+		counterChar = 0;
+		FlagClearFIFO_0 = FALSE;
+	}
+
 	/*Loop to find the size*/
 	while(FIFO_UART0.data[counterSize] != '\0'){
 		counterSize++;
@@ -506,6 +514,11 @@ FIFO_Type popFIFO_1(void){
 	static uint32 counterChar;
 	FIFO_Type fifo;
 
+	if(TRUE == FlagClearFIFO_1){
+		counterChar = 0;
+		FlagClearFIFO_1 = FALSE;
+	}
+
 	/*Loop to find the size*/
 	while(FIFO_UART1.data[counterSize] != '\0'){
 		counterSize++;
@@ -531,6 +544,10 @@ FIFO_FlagType pushFIFO_0(uint8 character){
 	static uint32 counterChar = 0;
 	const uint32 CR = 13;
 
+	if(TRUE == FlagClearFIFO_0){
+		counterChar = 0;
+		FlagClearFIFO_0 = FALSE;
+	}
 	/*Get the info into FIFO until find the CR value*/
 	if(character != CR){
 		FIFO_UART0.data[counterChar] = character;
@@ -546,6 +563,7 @@ FIFO_FlagType pushFIFO_0(uint8 character){
 			FIFO_UART0.stateFIFO = FULL;
 		}
 	}
+
 	return (FIFO_UART0.stateFIFO);
 
 }
@@ -554,6 +572,11 @@ FIFO_FlagType pushFIFO_1(uint8 character){
 
 	static uint32 counterChar = 0;
 	const uint32 CR = 13;
+
+	if(TRUE == FlagClearFIFO_1){
+		counterChar = 0;
+		FlagClearFIFO_1 = FALSE;
+	}
 
 	/*Get the info into FIFO until find the CR value*/
 	if(character != CR){
@@ -569,6 +592,8 @@ FIFO_FlagType pushFIFO_1(uint8 character){
 			FIFO_UART1.stateFIFO = FULL;
 		}
 	}
+
+
 	return (FIFO_UART1.stateFIFO);
 }
 
@@ -583,6 +608,8 @@ FIFO_FlagType clearFIFO_0(void){
 	FIFO_UART0.size = 0;
 	FIFO_UART0.stateFIFO = EMPTY;
 
+	FlagClearFIFO_0 = TRUE;
+
 	return (FIFO_UART0.stateFIFO);
 }
 
@@ -596,6 +623,8 @@ FIFO_FlagType clearFIFO_1(void){
 	}
 	FIFO_UART1.size = 0;
 	FIFO_UART1.stateFIFO = EMPTY;
+
+	FlagClearFIFO_1 = TRUE;
 
 	return (FIFO_UART1.stateFIFO);
 }

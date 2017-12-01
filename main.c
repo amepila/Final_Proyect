@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "MK64F12.h"
 #include "GPIO.h"
+#include "RTC.h"
 #include "DatatypeDefinitions.h"
 #include "LCDNokia5110.h"
 #include "SPI.h"
