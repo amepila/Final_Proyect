@@ -128,18 +128,20 @@ ShowContact_Type contactNumber1(void){
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; watchChar != '\0'; counterChar++){
+	for(counterChar = 0; counterChar != 50; counterChar++){
 		LCDNokia_sendChar(readMemory(POSITION_NAME + counterChar));
 		watchChar = readMemory(POSITION_NAME + counterChar);
+		if(watchChar == '\0'){counterChar = 50;}
 	}
 
 	LCDNokia_gotoXY(1,2);
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; watchChar != '\0'; counterChar++){
+	for(counterChar = 0; counterChar != 50; counterChar++){
 		LCDNokia_sendChar(readMemory(POSITION_NUMBER + counterChar));
 		watchChar = readMemory(POSITION_NUMBER + counterChar);
+		if(watchChar == '\0'){counterChar = 50;}
 	}
 
 	LCDNokia_gotoXY(1,5);
@@ -1191,14 +1193,14 @@ PhaseCompass_Type showCompass(PhaseCompass_Type data){
 	currentCompass1.stateMain = COMPASS;
 
 	if(TRUE == flagContrast){
-		//LCDNokia_writeByte(LCD_CMD, 0xB1);
+		writeI2CDevice(0x3A,0x2A,0x35);
 		flagContrast = FALSE;
 	}
-
 	startCompass();
 
 	if(getUART0_flag()){
 		if(getUART0_mailBox() == ASCII_ESC){
+			writeI2CDevice(0x3A,0x2A,0x00);
 			currentCompass1.phaseState = EXIT_COMPASS;
 		}
 		/**clear the reception flag*/

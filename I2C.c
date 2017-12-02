@@ -150,26 +150,32 @@ void I2C_stop(void){
 void writeI2CDevice2(uint8 slaveAddress,uint16 add,uint8 data){
 	uint8 Hadd=add>>BIT8;
 	uint8 Ladd=add;
+
+	I2Cdelay(5000);
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(slaveAddress); //Device the I2C wants to write to.
 	I2C_wait();
+	I2Cdelay(5000);
 	//I2C_get_ACK();
 
 	I2C_write_Byte(Hadd); //Write High address to access	I2C_get_ACK();
 	I2C_wait();
+	I2Cdelay(5000);
 	//I2C_get_ACK();
 
 	I2C_write_Byte(Ladd); //Write Low address to access	I2C_get_ACK();
 	I2C_wait();
+	I2Cdelay(5000);
 	//I2C_get_ACK();
 
 	I2C_write_Byte(data);
 	I2C_wait();
+	I2Cdelay(5000);
 	//I2C_get_ACK();
 
 	I2C_stop(); //Stop transfer
 
-	I2Cdelay(500);
+	I2Cdelay(5000);
 }
 void writeI2CDevice(uint8 slaveAddressW,uint8 add,uint8 data){
 	I2C_start(); //Generate Start Signal
@@ -193,20 +199,24 @@ uint8 readI2CDevice2(uint8 slaveAddresW,uint8 slaveAddressR,uint16 add){
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(WRITECONTROL); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
+	I2Cdelay(500);
 
 	I2C_write_Byte(Hadd); //Write first most significant 8 bits
 	I2C_wait();
+	I2Cdelay(500);
 
 	I2C_repeated_Start();
 
 	I2C_write_Byte(READCONTROL); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
+	I2Cdelay(500);
 
 	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
 	I2C_NACK();
 
 	dummy=I2C_read_Byte();
 	I2C_wait();
+	I2Cdelay(500);
 
 	I2C_stop();// Generating stop signal
 	dummy=I2C_read_Byte();

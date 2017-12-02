@@ -106,6 +106,7 @@ int main(void){
     	/**Machine states based on tags**/
     	mainFunctions = StateProgram[currentState].stateFunction;
     	currentState = mainFunctions();
+    	writeI2CDevice2(0xA0,0x33,0X55);
     }
     return 0;
 }

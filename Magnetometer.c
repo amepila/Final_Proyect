@@ -302,7 +302,7 @@ void magCalibration(){
 	writeI2CDevice(WRITECONTROL,0x42,YmAv&0xFF);
 	writeI2CDevice(WRITECONTROL,0x43,(ZmAv>>BIT8)&0xFF);
 	writeI2CDevice(WRITECONTROL,0x44,YmAv&0xFF);
-	writeI2CDevice(WRITECONTROL,SYSCTRL1,0x35);
+	//writeI2CDevice(WRITECONTROL,SYSCTRL1,0x35);
 
 
 }
