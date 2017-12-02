@@ -1100,6 +1100,6 @@ uint8 printWallpaperMain(void){
 }
 
 uint8 printLoading(uint8 counter){
-		LCDNokia_bitmap(Loading[counter]);
+		LCDNokia_bitmap((uint8*)Loading[counter]);
 	return (TRUE);
 }

@@ -20,6 +20,9 @@ void I2C_init(I2C_ChannelType channel, uint32 systemClock, uint32 baudRate){
 	static GPIO_pinControlRegisterType pinControlRegisterPortTx = GPIO_MUX5;
 	static GPIO_pinControlRegisterType pinControlRegisterPortRx = GPIO_MUX5;
 
+	static GPIO_pinControlRegisterType pinControlRegisterPortTx2 = GPIO_MUX2|GPIO_PS;
+	static GPIO_pinControlRegisterType pinControlRegisterPortRx2 = GPIO_MUX2|GPIO_PS;
+
 	GPIO_clockGating(GPIO_B);
 	GPIO_clockGating(GPIO_E);
 	SIM->SCGC1|=BIT_ON<<BIT6;
@@ -31,6 +34,12 @@ void I2C_init(I2C_ChannelType channel, uint32 systemClock, uint32 baudRate){
 
 	GPIO_pinControlRegister(GPIO_E,BIT25,&pinControlRegisterPortRx);
 	GPIO_dataDirectionPIN(GPIO_E,GPIO_INPUT,BIT25);
+
+	GPIO_pinControlRegister(GPIO_B,BIT2,&pinControlRegisterPortTx2);
+	GPIO_dataDirectionPIN(GPIO_B,GPIO_OUTPUT,BIT2);
+
+	GPIO_pinControlRegister(GPIO_B,BIT3,&pinControlRegisterPortRx2);
+	GPIO_dataDirectionPIN(GPIO_B,GPIO_INPUT,BIT3);
 
 	valueSCL = systemClock/(baudRate*valueMULT);
 
