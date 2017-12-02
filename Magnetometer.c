@@ -40,7 +40,6 @@ void GPIOForMagnetometerInit(){
 	GPIO_clockGating(GPIO_C);
 	GPIO_clockGating(GPIO_A);
 	static GPIO_pinControlRegisterType interrupt1= GPIO_MUX1|INTR_FALLING_EDGE|GPIO_PS|GPIO_PE;
-	static GPIO_pinControlRegisterType interruptW= GPIO_MUX1|GPIO_PE|GPIO_PS|INTR_FALLING_EDGE;
 
 	GPIO_pinControlRegister(GPIO_C,BIT13,&interrupt1);
 	GPIO_pinControlRegister(GPIO_C,BIT6,&interrupt1);
@@ -237,6 +236,7 @@ void magCalibration(){
 	uint8 j=0;
 	uint8 k=0;
 	dataReady=0;
+
 	while(i<120){
 		j++;
 		if(j==15){
@@ -302,7 +302,7 @@ void magCalibration(){
 	writeI2CDevice(WRITECONTROL,0x42,YmAv&0xFF);
 	writeI2CDevice(WRITECONTROL,0x43,(ZmAv>>BIT8)&0xFF);
 	writeI2CDevice(WRITECONTROL,0x44,YmAv&0xFF);
-	//writeI2CDevice(WRITECONTROL,SYSCTRL1,0x35);
+	writeI2CDevice(WRITECONTROL,SYSCTRL1,0x35);
 
 
 }

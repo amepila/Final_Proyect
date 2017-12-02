@@ -647,8 +647,8 @@ PhaseMessages_Type writeName(PhaseMessages_Type data){
 	}
 
 	if(getUART0_flag()){
-		for(counter = 0; counter < 27; counter++){
-			if(ASCII_Alphabet[counter] == getUART0_mailBox()){
+		for(counter = 0; counter < 10; counter++){
+			if(ASCII_Numbers[counter] == getUART0_mailBox()){
 				pushFIFO_0(getUART0_mailBox());
 				LCDNokia_sendChar(getUART0_mailBox());
 			}
