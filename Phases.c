@@ -732,7 +732,6 @@ PhaseMessages_Type sendMessages(PhaseMessages_Type data){
 	currentMessages5.phaseState = SEND_MESSAGES;
 	currentMessages5.stateMain = MESSAGES;
 
-	//commands to send
 
 	//UART_putString(UART_1,&SendMsg);
 

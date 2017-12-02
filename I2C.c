@@ -184,15 +184,20 @@ uint8 readI2CDevice2(uint8 slaveAddresW,uint8 slaveAddressR,uint16 add){
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(WRITECONTROL); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
+	I2Cdelay(1000);
 
 	I2C_write_Byte(Hadd); //Write first most significant 8 bits
 	I2C_wait();
+	I2Cdelay(1000);
+
 	I2C_write_Byte(Ladd); //Write first most significant 8 bits
 	I2C_wait();
+	I2Cdelay(1000);
 	I2C_repeated_Start();
 
 	I2C_write_Byte(READCONTROL); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
+	I2Cdelay(1000);
 
 	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
 	I2C_NACK();

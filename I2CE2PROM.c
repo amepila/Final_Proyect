@@ -13,13 +13,13 @@
 
 void writeMemory(uint16 add,uint8 data){
 	writeI2CDevice2(WRITECONTROL,add,data);
-	E2PROMdelay(500);
+	E2PROMdelay(5000);
 }
 
 
 uint8 readMemory(uint16 add){
-	return readI2CDevice2(WRITECONTROL,READCONTROL,add);
-	E2PROMdelay(500);
+	return readI2CDevice(WRITECONTROL,READCONTROL,add);
+	E2PROMdelay(6500);
 
 }
 
