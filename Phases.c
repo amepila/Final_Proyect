@@ -129,7 +129,7 @@ ShowContact_Type contactNumber1(void){
 	LCDNokia_gotoXY(1,1);
 
 	for(counterChar = 0; counterChar != 50; counterChar++){
-		LCDNokia_sendChar(readMemory(POSITION_NAME + counterChar));
+		LCDNokia_sendChar(readMemory(100 + counterChar));
 		watchChar = readMemory(POSITION_NAME + counterChar);
 		if(watchChar == '\0'){counterChar = 50;}
 	}

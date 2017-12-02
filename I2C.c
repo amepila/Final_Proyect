@@ -159,8 +159,9 @@ void writeI2CDevice2(uint8 slaveAddress,uint16 add,uint8 data){
 	I2C_wait();
 	//I2C_get_ACK();
 
+	I2Cdelay(6500);
 	I2C_stop(); //Stop transfer
-
+	I2Cdelay(6500);
 }
 void writeI2CDevice(uint8 slaveAddressW,uint8 add,uint8 data){
 	I2C_start(); //Generate Start Signal
@@ -226,6 +227,8 @@ uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add){
 	I2C_wait();
 
 	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
+	I2C0->C1 &= ~I2C_C1_TXAK_MASK;
+
 	I2C_NACK();
 
 	dummy=I2C_read_Byte();
