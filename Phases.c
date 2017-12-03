@@ -746,8 +746,8 @@ PhaseContacts_Type contactsMenu(PhaseContacts_Type data){
 
 	/**Print the current menu*/
 	if(TRUE == flagChange_Menu){
-		if(counterMenu == 1){printAddContact();}
-		if(counterMenu == 2){printViewContact();}
+		if(counterMenu == 1){printViewContact();}
+		if(counterMenu == 2){printAddContact();}
 		flagChange_Menu = FALSE;
 	}
 	/**Detect when a key is pressed*/
