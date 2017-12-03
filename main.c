@@ -20,21 +20,34 @@
 #include "Magnetometer.h"
 
 /**Macros to Clock Frequency**/
-#define CLK_FREQ_HZ 50000000  /* CLKIN0 frequency */
-#define SLOW_IRC_FREQ 32768	/*This is the approximate value for the slow irc*/
-#define FAST_IRC_FREQ 4000000 /*This is the approximate value for the fast irc*/
-#define EXTERNAL_CLOCK 0 /*It defines an external clock*/
-#define PLL_ENABLE 1 /**PLL is enabled*/
-#define PLL_DISABLE 0 /**PLL is disabled*/
-#define CRYSTAL_OSC 1  /*It defines an crystal oscillator*/
-#define LOW_POWER 0     /* Set the oscillator for low power mode */
-#define HIGH_POWER 1
-#define SLOW_IRC 0 		/* Set the slow IRC */
-#define FAST_IRC 1
-#define CLK0_TYPE 0     /* Crystal or canned oscillator clock input */
-#define PLL0_PRDIV 13    /* PLL predivider value */
-#define PLL0_VDIV 31    /* PLL multiplier value*/
 
+/* CLKIN0 frequency */
+#define CLK_FREQ_HZ 50000000
+/*This is the approximate value for the slow irc*/
+#define SLOW_IRC_FREQ 32768
+/*This is the approximate value for the fast irc*/
+#define FAST_IRC_FREQ 4000000
+/*It defines an external clock*/
+#define EXTERNAL_CLOCK 0
+/**PLL is enabled*/
+#define PLL_ENABLE 1
+/**PLL is disabled*/
+#define PLL_DISABLE 0
+/*It defines an crystal oscillator*/
+#define CRYSTAL_OSC 1
+/* Set the oscillator for low power mode */
+#define LOW_POWER 0
+/* Set the slow IRC */
+#define SLOW_IRC 0
+/* Crystal or canned oscillator clock input */
+#define CLK0_TYPE 0
+/* PLL pre-divider value */
+#define PLL0_PRDIV 25
+/* PLL multiplier value*/
+#define PLL0_VDIV 30
+
+/** Macros for debugging*/
+#define DEBUG
 #define PLL_DIRECT_INIT
 
 /**Settings of SPI**/
@@ -62,8 +75,11 @@ const StateType StateProgram[6] =
 };
 
 int main(void){
+
 	/**Configuration to enable the clock in 60 MHz**/
-	fbe_pbe(CLK_FREQ_HZ,PLL0_PRDIV,PLL0_VDIV);	// 97.656KHz ---> 50000000 and PLL is configured to generate 60000000
+	int mcg_clk_hz;
+	unsigned char modeMCG = 0;
+	mcg_clk_hz = pll_init(CLK_FREQ_HZ, LOW_POWER, EXTERNAL_CLOCK, PLL0_PRDIV, PLL0_VDIV, PLL_ENABLE);
 
 	/**First state in the program**/
   	States_MenuType currentState = MAIN_MENU;
@@ -75,7 +91,7 @@ int main(void){
 	LCDNokia_clear();
 	enableRNGA();
 	I2C_init(I2C_0, 30000000, 100000);
-	GPIOForMagnetometerInit();
+	//GPIOForMagnetometerInit();
 
 	/***Interruptions Configurations***/
 	/**Set the reference priority **/
@@ -86,27 +102,28 @@ int main(void){
 	NVIC_enableInterruptAndPriotity(PORTC_IRQ, PRIORITY_7);
 	NVIC_enableInterruptAndPriotity(PORTE_IRQ,PRIORITY_7);
 	NVIC_enableInterruptAndPriotity(UART0_IRQ, PRIORITY_9);
-	NVIC_enableInterruptAndPriotity(UART1_IRQ, PRIORITY_9);
+	NVIC_enableInterruptAndPriotity(UART1_RX_TX_IRQn, PRIORITY_9);
 	NVIC_enableInterruptAndPriotity(I2C0_IRQ,PRIORITY_9);
 	NVIC_enableInterruptAndPriotity(PIT_CH0_IRQ,PRIORITY_9);
 
 	/**Configures UART 0 to transmit/receive at 115200 bauds with a 60 MHz of clock core*/
-	UART0_init(UART_0, 60000000, BD_9600);
+	UART0_init(UART_0, 60000000, BD_115200);
 	/**Configures UART 1 to transmit/receive at 9600 bauds in GSM module with a 60 MHz of clock core*/
-	UART1_init(UART_1, 60000000, BD_9600);
+	UART1_init(UART_1, 60000000, BD_115200);
 	/**Enables the UART interrupts*/
 	UART0_interruptEnable(UART_0);
 	UART1_interruptEnable(UART_1);
 
 	/**Enable all the interrupts **/
 	EnableInterrupts;
-	setSysConfig();
+	//setSysConfig();
+
 
     while(1){
-
     	/**Machine states based on tags**/
-    	mainFunctions = StateProgram[currentState].stateFunction;
-    	currentState = mainFunctions();
-    }
+    	//mainFunctions = StateProgram[currentState].stateFunction;
+    	//currentState = mainFunctions();
+    	UART_putChar(UART_1,'A');
+    	//UART_putString(UART_1,"AT");
     return 0;
 }
