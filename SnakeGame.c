@@ -558,13 +558,13 @@ uint8 moveSnake(void){
 	/**Detect the commands to move the snake**/
 	if(getUART0_flag()){
 		/**Character W is move up**/
-		if(getUART0_mailBox() == UP){CurrentDirection = DIRECTION_UP;}
+		if((CurrentDirection != DIRECTION_DOWN) && (getUART0_mailBox() == UP)){CurrentDirection = DIRECTION_UP;}
 		/**Character S is move down**/
-		if(getUART0_mailBox() == DOWN){CurrentDirection = DIRECTION_DOWN;}
+		if((CurrentDirection != DIRECTION_UP) && (getUART0_mailBox() == DOWN)){CurrentDirection = DIRECTION_DOWN;}
 		/**Character A is move left**/
-		if(getUART0_mailBox() == LEFT){CurrentDirection = DIRECTION_LEFT;}
+		if((CurrentDirection != DIRECTION_RIGHT) && (getUART0_mailBox() == LEFT)){CurrentDirection = DIRECTION_LEFT;}
 		/**Character D is move right**/
-		if(getUART0_mailBox() == RIGHT){CurrentDirection = DIRECTION_RIGHT;}
+		if((CurrentDirection != DIRECTION_LEFT) && (getUART0_mailBox() == RIGHT)){CurrentDirection = DIRECTION_RIGHT;}
 
 		/**clear the reception flag*/
 		setUART0_flag(FALSE);
