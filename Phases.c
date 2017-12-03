@@ -5,7 +5,6 @@
  *      Author: Andres Hernandez
  */
 
-#include "Display.h"
 #include "Phases.h"
 #include "I2CE2PROM.h"
 #include "SnakeGame.h"
@@ -13,14 +12,19 @@
 #include "Magnetometer.h"
 #include "DirectionPicture.h"
 
+/**Position of the name of contacts**/
 #define POSITION_NAME		(0U)
+/**Position of the numbers of contacts**/
 #define POSITION_NUMBER 	(2000U)
+/**Position of the number of contacts**/
 #define POSITION_CONTACTS	(3000U)
-#define POSITION_GAMERS		(3010U)
-#define POSITION_SCORE		(4000U)
+/**Number of advance to the next position**/
 #define NEXT_POSITION		(100U)
+/**Position of the final position to name of contacts**/
 #define FINAL_POSITION		(1000U)
+/**Null character**/
 #define REGISTER_EMPTY		('\0')
+/**Contacts are full**/
 #define FULL_CONTACTS		(9U)
 
 /**ASCII table such as reference**/
@@ -46,24 +50,32 @@ typedef enum{
 		ASCII_z,			ASCII_BRACEOPEN,	ASCII_VERT,			ASCII_BRACECLOSE,	ASCII_TILDE
 }ASCII_Code;
 
+/**Alphabet and space in ASCII**/
 const uint8 ASCII_Alphabet[27] = {
 		'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',32
 };
+/**Numbers in ASCII**/
 const uint8 ASCII_Numbers[10] = {
 		'0','1','2','3','4','5','6','7','8','9'
 };
-
+/**Special keys in ASCII**/
 typedef enum{ASCII_CR = 13, ASCII_ESC = 27}ASCII_Special;
-const uint8 ReadMsg[] = "AT+CMGR";
+/**Command to send the message**/
 const uint8 SendMsg[] = "AT+CMGS";
+/**Message of the score**/
 const uint8 MsgScore[] = "Your score is: ";
+/**Message of the play again in snake game**/
 const uint8 MsgPlay[] = "Play again?";
+/**Message to confirm the play again in snake game**/
 const uint8 MsgConfirm[] = "Yes / No";
+/**Name field to contact**/
 const uint8 NameField[] = "Name: ";
+/**Number field to message**/
 const uint8 NumberField[] = "Number: ";
+/**Message field to message**/
 const uint8 MessageField[] = "Message: ";
+/****/
 const uint8 SaveNewContact[] = "Save";
-const uint8 CancelEdit[] = "Cancel";
 const uint8 EmptyContacts[] = "(Empty)";
 const uint8 FullContacts[] = "Full!!";
 const uint8 SelectBotton[] = "SEL";
@@ -71,11 +83,10 @@ const uint8 BackBotton[] = "BACK";
 static uint32 CurrentAddress_Name = 0;
 static uint32 CurrentAddress_Number = 0;
 static uint32 NoContacts = 0;
-static ModeContact_Type ModeContact = MODE_ADD;
 static Wall_Type CurrentWallpaper = ANDROID_MENU;
 static uint8 FlagChange_Wallpaper = TRUE;
 static uint8 FlagSnakeInit = TRUE;
-static FIFO_Type Name;
+static FIFO_Type Number;
 static FIFO_Type Message;
 
 const StateWall_Type StateWallpaper[5] =
@@ -122,7 +133,6 @@ const StateShowContact_Type StateShowContacts[10] =
 ShowContact_Type contactNumber1(void){
 
 	uint8 counterChar;
-	uint8 watchChar = 0;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
@@ -151,13 +161,12 @@ ShowContact_Type contactNumber1(void){
 ShowContact_Type contactNumber2(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + NEXT_POSITION) + counterChar));
 	}
 
@@ -165,7 +174,7 @@ ShowContact_Type contactNumber2(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + NEXT_POSITION) + counterChar));
 	}
 
@@ -180,13 +189,12 @@ ShowContact_Type contactNumber2(void){
 ShowContact_Type contactNumber3(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (2*NEXT_POSITION)) + counterChar));
 	}
 
@@ -194,7 +202,7 @@ ShowContact_Type contactNumber3(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (2*NEXT_POSITION)) + counterChar));
 	}
 
@@ -209,13 +217,12 @@ ShowContact_Type contactNumber3(void){
 ShowContact_Type contactNumber4(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (3*NEXT_POSITION)) + counterChar));
 	}
 
@@ -223,7 +230,7 @@ ShowContact_Type contactNumber4(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (3*NEXT_POSITION)) + counterChar));
 	}
 
@@ -238,13 +245,12 @@ ShowContact_Type contactNumber4(void){
 ShowContact_Type contactNumber5(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (4*NEXT_POSITION)) + counterChar));
 	}
 
@@ -252,7 +258,7 @@ ShowContact_Type contactNumber5(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (4*NEXT_POSITION)) + counterChar));
 	}
 
@@ -267,13 +273,12 @@ ShowContact_Type contactNumber5(void){
 ShowContact_Type contactNumber6(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (5*NEXT_POSITION)) + counterChar));
 	}
 
@@ -281,7 +286,7 @@ ShowContact_Type contactNumber6(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (5*NEXT_POSITION)) + counterChar));
 	}
 
@@ -296,13 +301,12 @@ ShowContact_Type contactNumber6(void){
 ShowContact_Type contactNumber7(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (6*NEXT_POSITION)) + counterChar));
 	}
 
@@ -310,7 +314,7 @@ ShowContact_Type contactNumber7(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (6*NEXT_POSITION)) + counterChar));
 	}
 
@@ -325,13 +329,12 @@ ShowContact_Type contactNumber7(void){
 ShowContact_Type contactNumber8(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (7*NEXT_POSITION)) + counterChar));
 	}
 
@@ -339,7 +342,7 @@ ShowContact_Type contactNumber8(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (7*NEXT_POSITION)) + counterChar));
 	}
 
@@ -354,13 +357,12 @@ ShowContact_Type contactNumber8(void){
 ShowContact_Type contactNumber9(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (8*NEXT_POSITION)) + counterChar));
 	}
 
@@ -368,7 +370,7 @@ ShowContact_Type contactNumber9(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (8*NEXT_POSITION)) + counterChar));
 	}
 
@@ -383,13 +385,12 @@ ShowContact_Type contactNumber9(void){
 ShowContact_Type contactNumber10(void){
 
 	uint8 counterChar;
-	uint8 watchChar;
 
 	LCDNokia_gotoXY(1,0);
 	LCDNokia_sendString((uint8*)NameField);
 	LCDNokia_gotoXY(1,1);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NAME + (9*NEXT_POSITION)) + counterChar));
 	}
 
@@ -397,7 +398,7 @@ ShowContact_Type contactNumber10(void){
 	LCDNokia_sendString((uint8*)NumberField);
 	LCDNokia_gotoXY(1,3);
 
-	for(counterChar = 0; counter < 15; counterChar++){
+	for(counterChar = 0; counterChar < 15; counterChar++){
 		LCDNokia_sendChar(readMemory((POSITION_NUMBER + (9*NEXT_POSITION)) + counterChar));
 	}
 
@@ -431,7 +432,8 @@ PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data){
 
 	/**Create the variable with current data**/
 	static PhaseMainMenu_Type currentMainMenu1;
-	//magCalibration();
+
+	magCalibration();
 
 	LCDNokia_clear();
 	/**Set with the current state and phase**/
@@ -553,72 +555,20 @@ PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data){
 
 	return (currentMainMenu2);
 }
-PhaseMessages_Type messagesMenu(PhaseMessages_Type data){
 
-	static PhaseMessages_Type currentMessages1;
-	static sint8 counterMenu = 1;
-	static uint8 flagChange_Menu = TRUE;
-
-	currentMessages1.phaseState = MESSAGES_MENU;
-	currentMessages1.stateMain = MESSAGES;
-
-	if(TRUE == flagChange_Menu){
-		if(counterMenu == 1){printDiedGame();}
-		if(counterMenu == 2){printTestFrame();}
-		flagChange_Menu = FALSE;
-	}
-	/**Detect when a key is pressed*/
-	if(getUART0_flag()){
-		/**Comparison between the pressed keys to continue with next main state**/
-		if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
-			flagChange_Menu = TRUE;
-			counterMenu++;
-			if(counterMenu > 2){counterMenu = 1;}
-		}
-		if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
-			if(counterMenu == 0){counterMenu = 1;}
-			else{counterMenu--;}
-			flagChange_Menu = TRUE;
-		}
-		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
-			flagChange_Menu = TRUE;
-			currentMessages1.stateMain = MAIN_MENU;
-		}
-		if((getUART0_mailBox() == ASCII_S) || (getUART0_mailBox() == ASCII_s)){
-			if(counterMenu == 1){currentMessages1.phaseState = WRITE_NAME;}
-			if(counterMenu == 2){currentMessages1.phaseState = MAILBOX_MSG;}
-			LCDNokia_clear();
-			flagChange_Menu = TRUE;
-			counterMenu = 1;
-		}
-		/**clear the reception flag*/
-		setUART0_flag(FALSE);
-	}
-	/**Clear the mailbox**/
-	clearUART0_mailbox();
-
-	return (currentMessages1);
-}
-PhaseMessages_Type mailBoxMSG(PhaseMessages_Type data){
-
-	static PhaseMessages_Type currentMessages2;
-
-	return (currentMessages2);
-}
-
-PhaseMessages_Type writeName(PhaseMessages_Type data){
+PhaseMessages_Type writeNumber(PhaseMessages_Type data){
 
 	static PhaseMessages_Type currentMessages3;
 	static uint8 counter;
 	static uint8 counterChar = 0;
 	static uint8 flagLock = TRUE;
 
-	currentMessages3.phaseState = WRITE_NAME;
+	currentMessages3.phaseState = WRITE_NUMBER;
 	currentMessages3.stateMain = MESSAGES;
 
 	if(TRUE == flagLock){
 		LCDNokia_gotoXY(1,0);
-		LCDNokia_sendString((uint8*)NameField);
+		LCDNokia_sendString((uint8*)NumberField);
 		LCDNokia_gotoXY(1,1);
 		flagLock = FALSE;
 	}
@@ -631,14 +581,14 @@ PhaseMessages_Type writeName(PhaseMessages_Type data){
 			}
 		}
 		if(getUART0_mailBox() == ASCII_CR){
-			Name = popFIFO_0();
+			Number = popFIFO_0();
 			currentMessages3.phaseState = WRITE_MESSAGES;
 			counterChar = 0;
 			clearFIFO_0();
 			flagLock = TRUE;
 		}
 		if(getUART0_mailBox() == ASCII_ESC){
-			clearFIFO(Name);
+			clearFIFO(Number);
 			clearFIFO_0();
 			currentMessages3.stateMain = MAIN_MENU;
 			counterChar = 0;
@@ -685,7 +635,7 @@ PhaseMessages_Type writeMessages(PhaseMessages_Type data){
 			flagLock = TRUE;
 		}
 		if(getUART0_mailBox() == ASCII_ESC){
-			clearFIFO(Name);
+			clearFIFO(Number);
 			clearFIFO(Message);
 			clearFIFO_0();
 			currentMessages4.stateMain = MAIN_MENU;
@@ -710,7 +660,7 @@ PhaseMessages_Type sendMessages(PhaseMessages_Type data){
 	currentMessages5.stateMain = MESSAGES;
 
 
-	UART_putString(UART_1,(sint8)*SendMsg);
+	//UART_putString(UART_1,(sint8)*SendMsg);
 
 
 	return(currentMessages5);
@@ -720,7 +670,7 @@ PhaseMessages_Type exitMessages(PhaseMessages_Type data){
 	static PhaseMessages_Type currentMessages6;
 
 	currentMessages6.stateMain = MAIN_MENU;
-	clearFIFO(Name);
+	clearFIFO(Number);
 	clearFIFO(Message);
 
 	return(currentMessages6);
@@ -746,15 +696,18 @@ PhaseContacts_Type contactsMenu(PhaseContacts_Type data){
 		if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
 			flagChange_Menu = TRUE;
 			counterMenu++;
+			LCDNokia_clear();
 			if(counterMenu > 2){counterMenu = 1;}
 		}
 		if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
 			if(counterMenu == 0){counterMenu = 1;}
 			else{counterMenu--;}
+			LCDNokia_clear();
 			flagChange_Menu = TRUE;
 		}
 		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
 			flagChange_Menu = TRUE;
+			LCDNokia_clear();
 			currentContacts1.stateMain = MAIN_MENU;
 		}
 		if((getUART0_mailBox() == ASCII_S) || (getUART0_mailBox() == ASCII_s)){
@@ -804,42 +757,23 @@ PhaseContacts_Type viewContacts(PhaseContacts_Type data){
 			if((getUART0_mailBox() == ASCII_D) || (getUART0_mailBox() == ASCII_d)){
 				flagChange_Contact = TRUE;
 				counterMenu++;
+				LCDNokia_clear();
 				if(counterMenu > NoContacts){counterMenu = 1;}
 			}
 			if((getUART0_mailBox() == ASCII_A) || (getUART0_mailBox() == ASCII_a)){
 				if(counterMenu == 0){counterMenu = 1;}
 				else{counterMenu--;}
+				LCDNokia_clear();
 				flagChange_Contact = TRUE;
 			}
 			if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
 				flagChange_Contact = TRUE;
 				counterMenu = 1;
+				LCDNokia_clear();
 				currentContacts2.phaseState = CONTACT_MENU;
 			}
-			if((getUART0_mailBox() == ASCII_E) || (getUART0_mailBox() == ASCII_e)){
-				if(counterMenu == 1){currentContacts2.noContact = 1;}
-				if(counterMenu == 2){currentContacts2.noContact = 2;}
-				if(counterMenu == 3){currentContacts2.noContact = 3;}
-				if(counterMenu == 4){currentContacts2.noContact = 4;}
-				if(counterMenu == 5){currentContacts2.noContact = 5;}
-				if(counterMenu == 6){currentContacts2.noContact = 6;}
-				if(counterMenu == 7){currentContacts2.noContact = 7;}
-				if(counterMenu == 8){currentContacts2.noContact = 8;}
-				if(counterMenu == 9){currentContacts2.noContact = 9;}
-				if(counterMenu == 10){currentContacts2.noContact = 10;}
-				currentContacts2.phaseState = EDIT_CONTACTS;
-				LCDNokia_clear();
-				flagChange_Contact = TRUE;
-				counterMenu = 1;
-			}
 		}
-		if(getUART0_mailBox() == ASCII_B){
-			flagChange_Contact = TRUE;
-			LCDNokia_clear();
-			counterMenu = 1;
-			currentContacts2.phaseState = CONTACT_MENU;
-		}
-		if(getUART0_mailBox() == ASCII_b){
+		if((getUART0_mailBox() == ASCII_B) || (getUART0_mailBox() == ASCII_b)){
 			flagChange_Contact = TRUE;
 			LCDNokia_clear();
 			counterMenu = 1;
@@ -948,22 +882,6 @@ PhaseContacts_Type addContacts(PhaseContacts_Type data){
 	return (currentContacts3);
 }
 
-PhaseContacts_Type editContacts(PhaseContacts_Type data){
-
-	/**Create the variable with current data**/
-	static PhaseContacts_Type currentContacts4;
-
-	/**Set with the current state and phase**/
-	currentContacts4.phaseState = data.phaseState;
-	currentContacts4.stateMain = data.stateMain;
-
-	cleanContact(data.noContact);
-
-	ModeContact = MODE_EDIT;
-	currentContacts4.phaseState = ADD_CONTACTS;
-
-	return (currentContacts4);
-}
 PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 
 	/**Create the variable with current data**/
@@ -973,15 +891,12 @@ PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 	uint8 counterSave;
 	uint32 counterAddress = 0;
 
-	if(ModeContact == MODE_EDIT){ positionAddress_Name = (data.noContact*NEXT_POSITION);}
-	if(ModeContact == MODE_ADD){ positionAddress_Name = (NoContacts*NEXT_POSITION) + NEXT_POSITION;}
+	positionAddress_Name = (NoContacts*NEXT_POSITION) + NEXT_POSITION;
 	positionAddress_Number = positionAddress_Name + POSITION_NUMBER;
 
-	if(ModeContact == MODE_ADD){
-		NoContacts++;
-		CurrentAddress_Name = NoContacts*NEXT_POSITION;
-		CurrentAddress_Number = CurrentAddress_Name + POSITION_NUMBER;
-	}
+	NoContacts++;
+	CurrentAddress_Name = NoContacts*NEXT_POSITION;
+	CurrentAddress_Number = CurrentAddress_Name + POSITION_NUMBER;
 
 	/**Save the name into memory*/
 	for(counterSave = data.sizeName; counterSave != 0; counterSave--){
@@ -998,7 +913,6 @@ PhaseContacts_Type saveContacts(PhaseContacts_Type data){
 		counterAddress++;
 	}
 
-	ModeContact = MODE_ADD;
 	writeMemory(POSITION_CONTACTS,(REGISTER_EMPTY + NoContacts));
 	currentContacts5.phaseState = CONTACT_MENU;
 	currentContacts5.stateMain = CONTACTS;

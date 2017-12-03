@@ -988,7 +988,7 @@ const uint8 wallpaperMain [] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-
+/**This pointer to functions contains the animation*/
 const uint32 Loading[8] = {
 					(uint32)frame1,
 					(uint32)frame2,
@@ -1000,105 +1000,128 @@ const uint32 Loading[8] = {
 					(uint32)frame8
 };
 
+/**Print in the Nokia LCD  the frame TEST*/
 uint8 printTestFrame(void){
 	LCDNokia_bitmap(TEST);
 	return(TRUE);
 }
 
+/**Print in the Nokia LCD  the frame CHIP*/
 Images_Type printChipFrame(void){
 	LCDNokia_bitmap(chip);
 	return(CHIP);
 }
 
+/**Print in the Nokia LCD  the frame HORDA*/
 Images_Type printHordaFrame(void){
 	LCDNokia_bitmap(horda);
 	return(HORDA);
 }
 
+/**Print in the Nokia LCD  the frame MUSIC*/
 Images_Type printMusicFrame(void){
 	LCDNokia_bitmap(music);
 	return(MUSIC);
 }
 
+/**Print in the Nokia LCD  the frame PIKACHU*/
 Images_Type printPikachuFrame(void){
 	LCDNokia_bitmap(pikachu);
 	return(PIKACHU);
 }
 
+/**Print in the Nokia LCD  the frame ANDROID*/
 Images_Type printAndroidFrame(void){
 	LCDNokia_bitmap(android);
 	return(ANDROID);
 }
 
+/**Print in the Nokia LCD  the frame SNAKE*/
 uint8 printSnakeGameFrame(void){
 	LCDNokia_bitmap(snakeGame);
 	return(TRUE);
 }
 
+/**Print in the Nokia LCD  the frame GAME OVER*/
 uint8 printGameOVer(void){
 	delay(T);
 	LCDNokia_bitmap(gameOver);
 	return(TRUE);
 }
 
+/**Print in the Nokia LCD  the frame START*/
 uint8 printStart(void){
 	LCDNokia_bitmap(start);
 	return(TRUE);
 }
 
+/**Print in the Nokia LCD  the frame DIED GAME*/
 uint8 printDiedGame(void){
 	LCDNokia_bitmap(diedGame);
 	return(TRUE);
 }
 
+/**Print in the Nokia LCD  the frame ANDROID MENU*/
 Wall_Type printAndroidMenu(void){
 	LCDNokia_bitmap(androidMenu);
 	return(ANDROID_MENU);
 }
 
+/**Print in the Nokia LCD  the frame CHIP MENU*/
 Wall_Type printChipMenu(void){
 	LCDNokia_bitmap(chipMenu);
 	return(CHIP_MENU);
 }
 
+/**Print in the Nokia LCD  the frame PIKACHU MENU*/
 Wall_Type printPikachuMenu(void){
 	LCDNokia_bitmap(pikachuMenu);
 	return(PIKACHU_MENU);
 }
+
+/**Print in the Nokia LCD  the frame MUSIC MENU*/
 Wall_Type printMusicMenu(void){
 	LCDNokia_bitmap(musicMenu);
 	return(MUSIC_MENU);
 }
+
+/**Print in the Nokia LCD  the frame HORDA MENU*/
 Wall_Type printHordaMenu(void){
 	LCDNokia_bitmap(hordaMenu);
 	return(HORDA_MENU);
 }
 
+/**Print in the Nokia LCD  the frame MESSAGES MAIN*/
 WallMenu_Type printMessagesMain(void){
 	LCDNokia_bitmap(messagesMain);
 	return(MESSAGES_MAIN);
 }
 
+/**Print in the Nokia LCD  the frame CONTACTS MAIN*/
 WallMenu_Type printContactsMain(void){
 	LCDNokia_bitmap(contactsMain);
 	return(CONTACTS_MAIN);
 }
 
+/**Print in the Nokia LCD  the frame SNAKE MAIN*/
 WallMenu_Type printSnakeMain(void){
 	LCDNokia_bitmap(snakeMain);
 	return(SNAKE_MAIN);
 }
 
+/**Print in the Nokia LCD  the frame COMPASS MAIN*/
 WallMenu_Type printCompassMain(void){
 	LCDNokia_bitmap(compassMain);
 	return(COMPASS_MAIN);
 }
 
+/**Print in the Nokia LCD  the frame WALLPAPER MAIN*/
 uint8 printWallpaperMain(void){
 	LCDNokia_bitmap(wallpaperMain);
 	return(TRUE);
 }
 
+/**Print in the Nokia LCD  the animation initial*/
 uint8 printLoading(uint8 counter){
 		LCDNokia_bitmap((uint8*)Loading[counter]);
 	return (TRUE);

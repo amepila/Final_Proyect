@@ -463,12 +463,13 @@ uint32 Convert_numberASCIItoDATA(uint8 *string){
 		}
 		counter3++;
 	}
-
+	/**Save the data*/
 	data = tmpData1;
 	return (data);
 }
 
 uint8 Convert_wordASCIItoDATA(uint8 word){
+	/**Translate the character ascii to data*/
 	uint8 valueWord = (uint8)word;
 	return (valueWord);
 }
@@ -605,11 +606,14 @@ FIFO_FlagType clearFIFO_0(void){
 	for(counter = 0; counter < 50; counter++){
 		FIFO_UART0.data[counter] = '\0';
 	}
+	/**Reset the parameters of FIFO*/
 	FIFO_UART0.size = 0;
 	FIFO_UART0.stateFIFO = EMPTY;
 
+	/**Set the flag of clear*/
 	FlagClearFIFO_0 = TRUE;
 
+	/**Send the status of the fifo**/
 	return (FIFO_UART0.stateFIFO);
 }
 
@@ -621,11 +625,14 @@ FIFO_FlagType clearFIFO_1(void){
 	for(counter = 0; counter < 50; counter++){
 		FIFO_UART1.data[counter] = '\0';
 	}
+	/**Reset the parameters of FIFO*/
 	FIFO_UART1.size = 0;
 	FIFO_UART1.stateFIFO = EMPTY;
 
+	/**Set the flag of clear*/
 	FlagClearFIFO_1 = TRUE;
 
+	/**Send the status of the fifo**/
 	return (FIFO_UART1.stateFIFO);
 }
 
@@ -637,6 +644,7 @@ void clearFIFO(FIFO_Type fifo){
 	for(counter = 0; counter < 50; counter++){
 		fifo.data[counter] = '\0';
 	}
+	/*Reset the parameters of the FIFO*/
 	fifo.size = 0;
 	fifo.stateFIFO = EMPTY;
 }

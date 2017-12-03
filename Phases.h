@@ -43,9 +43,7 @@ typedef const struct PhaseMainMenu{
  * \brief This data type define the data type in MESSAGES
  */
 
-typedef enum{MESSAGES_MENU,
-			MAILBOX_MSG,
-			WRITE_NAME,
+typedef enum{WRITE_NUMBER,
 			WRITE_MESSAGES,
 			SEND_MESSAGES,
 			EXIT_MESSAGES
@@ -71,7 +69,6 @@ typedef enum{MODE_ADD,MODE_EDIT}ModeContact_Type;
 typedef enum{CONTACT_MENU,
 			VIEW_CONTACTS,
 			ADD_CONTACTS,
-			EDIT_CONTACTS,
 			SAVE_CONTACTS
 }PhaseStateContacts_Type;
 
@@ -159,6 +156,9 @@ typedef const struct PhaseWallpaper{
 	PhaseWallpaper_Type(*PhaseWallpaper)(PhaseWallpaper_Type);
 }PhasePtrWallpaper_Type;
 /**********************************************************/
+/**
+ * \brief This data type define the data type to Show Contacts
+ */
 typedef enum{CONTACT1,
 			CONTACT2,
 			CONTACT3,
@@ -176,49 +176,367 @@ typedef ShowContact_Type(*fptrStateShowContact)(void);
 typedef const struct StateShowContact{
 	ShowContact_Type(*stateShowContact)(void);
 }StateShowContact_Type;
-/*********************************************************/
 
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Clean any contact
+ 	 \param[in]  contact Contact selected
+ 	 \return void
+ */
 void cleanContact(uint8 contact);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber1(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber2(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber3(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber4(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber5(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber6(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber7(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber8(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber9(void);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the contact saved
+ 	 \param[in]  void
+ 	 \return The information of the contact
+ */
 ShowContact_Type contactNumber10(void);
 
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State that charges the first initialization of the program
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseMainMenu_Type initialLoad1(PhaseMainMenu_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State that charges the second initialization of the program
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseMainMenu_Type initialLoad2(PhaseMainMenu_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State that show the wallpaper
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseMainMenu_Type generalView(PhaseMainMenu_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State that enters in the menu
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseMainMenu_Type viewMenu(PhaseMainMenu_Type data);
 
-PhaseMessages_Type messagesMenu(PhaseMessages_Type data);
-PhaseMessages_Type mailBoxMSG(PhaseMessages_Type data);
-PhaseMessages_Type writeName(PhaseMessages_Type data);
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to write the number
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
+PhaseMessages_Type writeNumber(PhaseMessages_Type data);
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to write the message
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseMessages_Type writeMessages(PhaseMessages_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to send the message
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseMessages_Type sendMessages(PhaseMessages_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to exit of the state
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
+
 PhaseMessages_Type exitMessages(PhaseMessages_Type data);
 
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to enter to menu of contacts
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseContacts_Type contactsMenu(PhaseContacts_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	State to view all the contacts through the rotative menu
+ 	 \param[in]  delay Value of delay
+ 	 \return void
+ */
 PhaseContacts_Type viewContacts(PhaseContacts_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to add the contacts
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseContacts_Type addContacts(PhaseContacts_Type data);
-PhaseContacts_Type editContacts(PhaseContacts_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Save the contacts in the memory
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseContacts_Type saveContacts(PhaseContacts_Type data);
 
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Start the game of snake
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseSnake_Type startGame(PhaseSnake_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Run the game of snake
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseSnake_Type runGame(PhaseSnake_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Show the image of game over
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseSnake_Type gameLost(PhaseSnake_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Show the score
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseSnake_Type showScore(PhaseSnake_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Print the question about the play again
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseSnake_Type playAgain(PhaseSnake_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to exit and back to the menu
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseSnake_Type exitGame(PhaseSnake_Type data);
 
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to show the compass
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseCompass_Type showCompass(PhaseCompass_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to exit of the compass
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseCompass_Type exitCompass(PhaseCompass_Type data);
 
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to view the different wallpapers in the phone
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseWallpaper_Type viewWallpaper(PhaseWallpaper_Type data);
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 State to exit and come back to the menu
+ 	 \param[in]  data The current information
+ 	 \return Updated information
+ */
 PhaseWallpaper_Type exitWallpaper(PhaseWallpaper_Type data);
 
 
