@@ -8,6 +8,10 @@
 #ifndef DIRECTIONPICTURE_H_
 
 #define DIRECTIONPICTURE_H_
+
+/*
+ * \brief coleccion de getters para las imagenes que representan la brujula en la aplicacion.
+ */
 uint32 getPunt0();
 uint32 getPunt30();
 uint32 getPunt60();

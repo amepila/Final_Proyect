@@ -182,10 +182,25 @@ void I2C_start(void);
 
  */
 void I2C_stop(void);
-void writeI2CDevice2(uint8 slaveAddressW,uint16 add,uint8 data);
+/*
+ * \brief Escritura para direcciones de 16 bits
+ */
+void writeI2CDevice2(uint8 slaveAddressW,uint8 Hadd,uint8 add,uint8 data);
+/*
+ * \brief Escritura para direcciones de 8 bits
+ */
 void writeI2CDevice(uint8 slaveAddressW,uint8 add,uint8 data);
-uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add);
+/*
+ * \brief lectura para direcciones de 8 bits
+ */
+uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add,uint8);
+/*
+ * \brief Lectura para direcciones de 16 bits
+ */
 uint8 readI2CDevice2(uint8 slaveAddressW,uint8 slaveAddressR,uint16 add);
+/*
+ * \brief delay especifico del I2C hecho por claridad
+ */
 void I2Cdelay(uint32 delay);
 
 void I2Cdelay(uint32 delay);

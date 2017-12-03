@@ -90,7 +90,7 @@ int main(void){
 	LCDNokia_clear();
 	enableRNGA();
 	I2C_init(I2C_0, 30000000, 100000);
-	//GPIOForMagnetometerInit();
+	GPIOForMagnetometerInit();
 
 	/***Interruptions Configurations***/
 	/**Set the reference priority **/
@@ -107,23 +107,20 @@ int main(void){
 
 	/**Configures UART 0 to transmit/receive at 115200 bauds with a 60 MHz of clock core*/
 	UART0_init(UART_0, 60000000, BD_115200);
-	/**Configures UART 1 to transmit/receive at 9600 bauds in GSM module with a 60 MHz of clock core*/
-	UART1_init(UART_1, 60000000, BD_9600);
+	/**Configures UART 1 to transmit/receive at 115200 bauds in GSM module with a 60 MHz of clock core*/
+	UART1_init(UART_1, 60000000, BD_115200);
 	/**Enables the UART interrupts*/
 	UART0_interruptEnable(UART_0);
 	UART1_interruptEnable(UART_1);
 
 	/**Enable all the interrupts **/
 	EnableInterrupts;
-	//setSysConfig();
-
+	setSysConfig();
 
     while(1){
     	/**Machine states based on tags**/
-    	//mainFunctions = StateProgram[currentState].stateFunction;
-    	//currentState = mainFunctions();
-    	UART_putChar(UART_1,'b');
-    	//UART_putString(UART_1,"AT");
+    	mainFunctions = StateProgram[currentState].stateFunction;
+    	currentState = mainFunctions();
     }
     return 0;
 }

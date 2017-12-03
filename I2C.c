@@ -125,6 +125,9 @@ void I2C_wait(void){
 void I2C_get_ACK(void){
 	while(FALSE != (I2C0->S & I2C_S_RXAK_MASK)){}
 }
+BooleanType I2C_checkAck(void){
+	//return I2C0->S
+}
 
 void I2C_start(void){
 
@@ -138,31 +141,26 @@ void I2C_stop(void){
 	I2C0->C1&= ~I2C_C1_TX_MASK;
 	I2C0->C1&= ~I2C_C1_MST_MASK;
 }
-void writeI2CDevice2(uint8 slaveAddress,uint16 add,uint8 data){
-	uint8 Hadd=add>>BIT8;
-	uint8 Ladd=add;
+//Funcion para escribir un dato de 8 bits en una direccion de 16 bits
+//Sigue el protocolo estandar de I2C.
+void writeI2CDevice2(uint8 slaveAddress,uint8 add,uint8 Hadd,uint8 data){
 
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(slaveAddress); //Device the I2C wants to write to.
 	I2C_wait();
-	//I2C_get_ACK();
 
 	I2C_write_Byte(Hadd); //Write High address to access	I2C_get_ACK();
 	I2C_wait();
-	//I2C_get_ACK();
 
-	I2C_write_Byte(Ladd); //Write Low address to access	I2C_get_ACK();
+	I2C_write_Byte(add); //Write Low address to access	I2C_get_ACK();
 	I2C_wait();
-	//I2C_get_ACK();
 
 	I2C_write_Byte(data);
 	I2C_wait();
-	//I2C_get_ACK();
-
-	I2Cdelay(6500);
 	I2C_stop(); //Stop transfer
-	I2Cdelay(6500);
 }
+//Funcion para escribir 8 bits en una direccion de memoria de 8 bits.
+//Sigue el protocolo estandar de I2C.
 void writeI2CDevice(uint8 slaveAddressW,uint8 add,uint8 data){
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(slaveAddressW); //Device the I2C wants to write to.
@@ -175,50 +173,38 @@ void writeI2CDevice(uint8 slaveAddressW,uint8 add,uint8 data){
 	I2C_wait();
 	I2C_stop(); //Stop transfer
 
-	I2Cdelay(500);
+	I2Cdelay(1000);
 }
-uint8 readI2CDevice2(uint8 slaveAddresW,uint8 slaveAddressR,uint16 add){
+//Funcion para leer dispositivos I2C con direcciones de 8 bits
+//Sigue el procedimiento estandar de I2C
+uint8 readI2CDevice2(uint8 slaveAddressW,uint8 slaveAddressR,uint16 add){
 	uint8 dummy=0;
-
 	uint8 Hadd=add>>BIT8;
 	uint8 Ladd=add;
+
 	I2C_start(); //Generate Start Signal
-	I2C_write_Byte(WRITECONTROL); //"10100000" Write control code, CSS and choose write
-	I2C_wait();
-	I2Cdelay(1000);
-
-	I2C_write_Byte(Hadd); //Write first most significant 8 bits
-	I2C_wait();
-	I2Cdelay(1000);
-
-	I2C_write_Byte(Ladd); //Write first most significant 8 bits
-	I2C_wait();
-	I2Cdelay(1000);
-	I2C_repeated_Start();
-
-	I2C_write_Byte(READCONTROL); //"10100000" Write control code, CSS and choose write
-	I2C_wait();
-	I2Cdelay(1000);
-
-	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
-	I2C_NACK();
-
-	dummy=I2C_read_Byte();
+	I2C_write_Byte(slaveAddressW); //Device the I2C wants to write to.
 	I2C_wait();
 
-	I2C_stop();// Generating stop signal
-	dummy=I2C_read_Byte();
+	I2C_write_Byte(Hadd); //Write High address to access	I2C_get_ACK();
+	I2C_wait();
 
-	return dummy;
+	I2C_write_Byte(Ladd); //Write Low address to access	I2C_get_ACK();
+	I2C_wait();
+	I2C_stop(); //Stop transfer
+
 }
-uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add){
+//Funcion para leer dispositivos I2C con direcciones de 16 bits
+//Sigue el procedimiento estandar de I2C
+uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add,uint8 addL){
 	uint8 dummy=0;
 
 	I2C_start(); //Generate Start Signal
 	I2C_write_Byte(slaveAddressW); //"10100000" Write control code, CSS and choose write
 	I2C_wait();
-
-	I2C_write_Byte(add); //Write first most significant 8 bits
+	I2C_write_Byte(add);
+	I2C_wait();
+	I2C_write_Byte(addL);
 	I2C_wait();
 
 	I2C_repeated_Start();
@@ -227,22 +213,17 @@ uint8 readI2CDevice(uint8 slaveAddressW,uint8 slaveAddressR,uint8 add){
 	I2C_wait();
 
 	I2C_TX_RX_Mode(I2C_RX_MODE);// Changing I2C module to receiver mode
-	I2C0->C1 &= ~I2C_C1_TXAK_MASK;
 
-	I2C_NACK();
+	I2C0->C1 |= I2C_C1_TXAK_MASK;
 
 	dummy=I2C_read_Byte();
 	I2C_wait();
-
 	I2C_stop();// Generating stop signal
+
 	dummy=I2C_read_Byte();
-	I2Cdelay(500);
 	return dummy;
 }
 
-void I2C0_IRQHandler(){
-
-}
 
 void I2Cdelay(uint32 delay){
 	uint32 i=delay;

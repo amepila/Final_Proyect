@@ -35,6 +35,8 @@ float AXmt, AYmt, AZmt;
 float AXg,AYg,AZg;
 uint8 fullDegrees=180;
 rawdatamag mag;
+//Esta funcion inicializa los puertos PTC13 Y PTC6 que estan conectados al FXOS8700CQ (accelerometro y magnetometro) de la K64.
+//Los inicializa para que funcionen por medio de la pull-up resistance que tienen en medio.
 
 void GPIOForMagnetometerInit(){
 	GPIO_clockGating(GPIO_C);
@@ -48,39 +50,42 @@ void GPIOForMagnetometerInit(){
 	GPIO_dataDirectionPIN(GPIO_C,GPIO_INPUT,BIT6);
 	GPIO_dataDirectionPIN(GPIO_A,GPIO_INPUT,BIT4);
 }
+//SetSysConfig configura el FXOS8700CQ para que funcione de la manera especifica deseada.
+
 void setSysConfig(){
-	//General Accelerometer  and Magnetometer reset.
+	//Se reinician el FX0S8700CQ
 	writeI2CDevice(WRITECONTROL,SYSCTRL2, 0x40);
 	MAGdelay(3000); //Delay necesario para que escriba el siguiente dato ya que inicia de stand by
-	//Magnetometer in hybrid mode (accelerometer and magnetometer);
+	//FXOS8700CQ en modo hibrido, accelerometro y magnetometro activado
 	writeI2CDevice(WRITECONTROL,MAGCTRLREG,0x1F);
 	MAGdelay(3000);
-
-	//Jump from end of Accelerometer to magnetometer in burst read.
+	//Escritura de confirmacion en 0s
 	writeI2CDevice(WRITECONTROL,MAGCTRLREG2,0x00);
 	MAGdelay(2000);
 
-	//High resolution data capture.
+	//Captura en alta resolucion
 	writeI2CDevice(WRITECONTROL,SYSCTRL2,0x02);
 	MAGdelay(2000);
 
-	//Interrupts in push-pull mode
+	//Interrupciones en push-pull, por la resistencia pull-up interna
 	writeI2CDevice(WRITECONTROL,SYSCTRL3,0x00);
 	MAGdelay(2000);
 
-	//Activate Interrupts for data ready.
+	//Activa la interrupcion de data ready
 	writeI2CDevice(WRITECONTROL,SYSCTRL4,0x01);
 	MAGdelay(2000);
 
-	//Data ready interrupt set to PTC6
+	//Se coloca el data ready en el PTC6 (INT1 del magnetometro)
 	writeI2CDevice(WRITECONTROL,SYSCTRL5,0x01);
 	MAGdelay(2000);
 
-	//Output data rates, 3.15Hz, Reduced Noise and Active mode
+	//Se generan datos cada 3.15Hz para reducir ruido.
 	writeI2CDevice(WRITECONTROL,SYSCTRL1,0x35);
 	MAGdelay(2000);
 
 }
+//BurstReadMag esta funcion hace una lectura en cadena de los registros donde se guardan los valores del magnetometro cada vez que
+//los datos estan listos estos son almacenados en una estructura que se pasa por referencia para su utilizacion
 
 void burstReadMag(rawdatamag *mag){
 	if(dataReady==1){
@@ -220,7 +225,9 @@ void burstReadAccMag(rawdataacc *acc,rawdatamag *mag){
 	mag->zm=((uint16)(buffer[10]<<8)|(buffer[11]));
 	}
 }
-
+//Se aprovecha el ciclo de calibracion para mostrar una imagen animada en lo que se completa la calibracion
+//Cada 15 ciclos de i avanzara j con ello avanzara el frame y permitira que la animacion se  vea de manera mas limpia
+//es decir reduce la velocidad.
 void magCalibration(){
 	sint16 Xmcalmax;
 	sint16 Ymcalmax;
@@ -239,7 +246,7 @@ void magCalibration(){
 
 	while(i<120){
 		j++;
-		if(j==15){
+		if(j==45){
 			k++;
 			j=0;
 		}
@@ -307,37 +314,8 @@ void magCalibration(){
 
 }
 
-void readSysConfig(){
-	//General Accelerometer  and Magnetometer reset.
-	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL2);
-	MAGdelay(200);
-	//Magnetometer in hybrid mode (accelerometer and magnetometer);
-	readI2CDevice(WRITECONTROL,READCONTROL,MAGCTRLREG);
-	MAGdelay(200);
-
-	//Jump from end of Accelerometer to magnetometer in burst read.
-//	writeI2CDevice(WRITECONTROL,MAGCTRLREG2,0x20);
-	//High resolution data capture.
-	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL2);
-	MAGdelay(200);
-
-	//Interrupts in push-pull mode
-	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL3);
-	MAGdelay(200);
-
-	//Activate Interrupts for data ready.
-	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL4);
-	MAGdelay(200);
-
-	//Data ready interrupt set to PTC6
-	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL5);
-	MAGdelay(200);
-
-	//Output data rates, 3.15Hz, Reduced Noise and Active mode
-	readI2CDevice(WRITECONTROL,READCONTROL,SYSCTRL1);
-	MAGdelay(200);
-
-}
+//En base en la direccion a la que se encuentre el norte, se dibujara una flecha que indique hacia donde se tiene que girar para
+//apuntar al norte.
 void drawDirection(uint16 dir){
 	if(dir>0&&dir<30){
 		LCDNokia_bitmap((uint8*)getPunt0());
@@ -380,25 +358,39 @@ void drawDirection(uint16 dir){
 	}
 
 }
+//Funcion que ejecuta todo lo necesario para que funcione el compass
+
 void startCompass(){
+	//Lectura en cadena de los registros del magnetometro
+
 	burstReadMag(&mag);
-	//Calculos en base a la datasheet
+	//Calculos en base a la datasheet, relacionados con la sensibilidad del componente
 	AXmt=(float)mag.xm/10;
 	AYmt=(float)mag.ym/10;
 	AZmt=(float)mag.zm/10;
+	/*
+	 * Ya que se quiere obtener el angulo que se encuentra entre dos vectores se usara el dividir el vector Y/X
+	 * y obtener su arcotangente para obtener los grados del vector en radianes. se multiplica por 180 entre pi para cambiarlo a
+	 * grados en circulo y se le suman 180 para evitar numeros negativos y evitar el manejo de numeros negativos en el LCDNokia5110
+	 *
+	 */
 	inarc=AYmt/AXmt;
 	arc=fullDegrees+(float)atan2(AYmt,AXmt)*180/3.1415;
 	drawDirection(arc);
+	//Para complementar tambien se muestra el la distancia actual al norte en grados.
+
 	LCDNokia_gotoXY(0,0);
 	LCDNokia_printValue(arc);
 }
+//Setter para el data ready usada en la interrupcion.
+
 void setDataReady(){
 	dataReady=1;
 }
 uint8 getDataReady(){
 	return dataReady;
 }
-
+//Delay especifico del Magnetometro.
 void MAGdelay(uint32 delay){
 	uint32 i=delay;
 	while(i!=0){

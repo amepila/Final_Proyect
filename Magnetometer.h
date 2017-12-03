@@ -32,26 +32,44 @@ typedef struct{
 	sint8 calY;
 	sint8 calZ;
 }accCalData;
+/*
+ * \brief Le da las configuraciones iniciales al magnetometro para que funcione de manera deseada.
+ */
 void setSysConfig();
-void readSysConfig();
+/*
+ * \brief Configura el GPIO relacionado con el magnetometro para conectar principalmente las interrupciones con la K64.
+ */
 void GPIOForMagnetometerInit();
-void burstWriteAccCalibration(sint8 Xcal, sint8 Ycal, sint8 Zcal);
-void setMagnetometerConfig();
-void setMagConfigReg1Def();
-void setMagConfigReg1();
-void setMagConfigReg2();
-void setXYZ_config();
-void setAccelControlReg1();
-void setAccelControlReg2();
-void readFXOS8700CQ(rawdatamag*);
-uint8 readTest();
+/*
+ * \brief Hace una lectura en cadena sobre los registros del magnetometro y los guarda en una estructura para que puedan ser
+ * utilizados
+ */
 void burstReadMag(rawdatamag *mag);
-void burstReadAcc(rawdataacc *acc);
-void accCalibration();
+/*
+ * \brief Setter que se dispara en la interrupcion de data ready en el GPIO.C
+ */
 void setDataReady();
+/*
+ * \brief Getter del data ready usado principalmente para metodos de debugging
+ */
 uint8 getDataReady();
+/*
+ * \brief delay propio del magnetometro solo por fines de claridad
+ */
 void MAGdelay(uint32);
+/*
+ * \brief funcion que recibe un angulo y en base a ello dibujara una flecha que indicara hacia donde te tienes que girar para que ese angulo quede
+ * frente a ti. usado principalmente para mostrar el norte
+ * \param[dir] angulo del cual se basara las imagenes.
+ */
 void drawDirection(uint16 dir);
+/*
+ * \brief funcion que calibra el magnetometro por medio de sumas de valores mas altos y bajos posibles dados por el dispositivo y de ahi sacando un
+ * promedio con el cual sea maas facil sacar los valores deseados del magnetometro
+ */
 void magCalibration();
+/*
+ * \brief Inicia el magnetometro, obtiene los valores de lectura del magnetometro y los trata para obtener valores legibles direccion y angulo
+ */
 void startCompass();
 #endif /* MAGNETOMETER_H_ */

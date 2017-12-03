@@ -20,7 +20,7 @@
 /**ASCII D to move right**/
 #define RIGHT			(68)
 /**Time to launch the new snake**/
-#define TIME			(100000)
+#define TIME			(300000)
 /**Time to wait the initial game**/
 #define INITIAL_TIME	(1000000)
 /**Coordinate of edge up**/
